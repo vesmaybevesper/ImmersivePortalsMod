@@ -1,19 +1,19 @@
 {
   "schemaVersion": 1,
-  "id": "immersive_portals",
+  "id": "immersive_portals_reborn",
   "provides": ["iportal", "imm_ptl_core", "immersive_portals_core"],
   "version": "${version}",
-  "name": "Immersive Portals",
+  "name": "Immersive Portals Reborn",
   "description": "See through portals and travel between dimensions seamlessly.",
   "authors": [
-    "qouteall", "Other Contributors (see GitHub)"
+    "VesMaybeVesper","qouteall", "Other Contributors (see GitHub)"
   ],
   "contact": {
-    "homepage": "https://qouteall.fun/immptl",
-    "sources": "https://github.com/iPortalTeam/ImmersivePortalsMod",
-    "issues": "https://github.com/iPortalTeam/ImmersivePortalsMod/discussions",
-    "email": "qouteall@163.com",
-    "discord": "https://discord.gg/BZxgURK"
+    "homepage": "",
+    "sources": "https://github.com/vesmaybevesper/ImmersivePortalsMod",
+    "issues": "https://github.com/vesmaybevesper/ImmersivePortalsMod/issues",
+    "email": "",
+    "discord": ""
   },
   "license": "Apache-2.0",
   "icon": "assets/immersive_portals/icon.png",
@@ -44,8 +44,8 @@
     "q_misc_util.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric-api": ">=0.109.0",
+    "fabricloader": ">=0.19.3",
+    "fabric-api": ">=0.116.15",
     "minecraft": ["1.21", "1.21.1"],
     "dimlib": "*"
   },
@@ -56,10 +56,11 @@
     "resolutioncontrol": "*",
     "canvas": "*",
     "cardboard": "*",
-    "iris": ["<1.8.0", ">1.8.0"],
-    "sodium": ["<0.6.0", ">0.6.0"],
+    "iris": ["<1.8.13", ">1.8.15"],
+    "sodium": ["<0.8.0", ">0.8.14"],
     "gravity_api": "*",
-    "vmp": "*"
+    "vmp": "*",
+    "veil": "*"
   },
   "custom": {
     "modmenu": {
