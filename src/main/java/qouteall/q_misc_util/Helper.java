@@ -15,8 +15,8 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -214,12 +214,12 @@ public class Helper {
         double t = getCollidingT(planePos, planeNormal, point, planeNormal);
         return point.add(planeNormal.scale(t));
     }
-    
+
     public static Vec3i getUnitFromAxis(Direction.Axis axis) {
         return Direction.get(
             Direction.AxisDirection.POSITIVE,
             axis
-        ).getNormal();
+        ).getUnitVec3i();
     }
     
     public static int getCoordinate(Vec3i v, Direction.Axis axis) {
@@ -406,7 +406,7 @@ public class Helper {
     
     public static AABB getBoxSurfaceInversed(AABB box, Direction direction) {
         double size = getCoordinate(getBoxSize(box), direction.getAxis());
-        Vec3 shrinkVec = Vec3.atLowerCornerOf(direction.getNormal()).scale(size);
+        Vec3 shrinkVec = Vec3.atLowerCornerOf(direction.getUnitVec3i()).scale(size);
         return box.contract(shrinkVec.x, shrinkVec.y, shrinkVec.z);
     }
     
@@ -501,23 +501,23 @@ public class Helper {
         return x1 * y2 - x2 * y1;
     }
     
-    public static ResourceKey<Level> dimIdToKey(ResourceLocation identifier) {
+    public static ResourceKey<Level> dimIdToKey(Identifier identifier) {
         return ResourceKey.create(Registries.DIMENSION, identifier);
     }
     
     public static ResourceKey<Level> dimIdToKey(String str) {
-        return dimIdToKey(McHelper.newResourceLocation(str));
+        return dimIdToKey(McHelper.newIdentifier(str));
     }
     
     public static void putWorldId(CompoundTag tag, String tagName, ResourceKey<Level> dim) {
-        tag.putString(tagName, dim.location().toString());
+        tag.putString(tagName, dim.identifier().toString());
     }
     
     public static ResourceKey<Level> getWorldId(CompoundTag tag, String tagName) {
         Tag term = tag.get(tagName);
         
         if (term instanceof StringTag) {
-            String id = ((StringTag) term).getAsString();
+            String id = ((StringTag) term).toString();
             return dimIdToKey(id);
         }
         
@@ -631,9 +631,9 @@ public class Helper {
     
     public static Vec3 getVec3d(CompoundTag compoundTag, String name) {
         return new Vec3(
-            compoundTag.getDouble(name + "X"),
-            compoundTag.getDouble(name + "Y"),
-            compoundTag.getDouble(name + "Z")
+            compoundTag.getDouble(name + "X").get(),
+            compoundTag.getDouble(name + "Y").get(),
+            compoundTag.getDouble(name + "Z").get()
         );
     }
     
@@ -655,9 +655,9 @@ public class Helper {
     
     public static BlockPos getVec3i(CompoundTag compoundTag, String name) {
         return new BlockPos(
-            compoundTag.getInt(name + "X"),
-            compoundTag.getInt(name + "Y"),
-            compoundTag.getInt(name + "Z")
+            compoundTag.getInt(name + "X").get(),
+            compoundTag.getInt(name + "Y").get(),
+            compoundTag.getInt(name + "Z").get()
         );
     }
     
@@ -674,10 +674,10 @@ public class Helper {
     public static DQuaternion getQuaternion(CompoundTag compoundTag, String name) {
         if (compoundTag.contains(name + "X")) {
             return new DQuaternion(
-                compoundTag.getDouble(name + "X"),
-                compoundTag.getDouble(name + "Y"),
-                compoundTag.getDouble(name + "Z"),
-                compoundTag.getDouble(name + "W")
+                compoundTag.getDouble(name + "X").get(),
+                compoundTag.getDouble(name + "Y").get(),
+                compoundTag.getDouble(name + "Z").get(),
+                compoundTag.getDouble(name + "W").get()
             );
         }
         else {
@@ -686,7 +686,7 @@ public class Helper {
     }
     
     public static ListTag getCompoundList(CompoundTag tag, String name) {
-        return tag.getList(name, 10);
+        return tag.getList(name).get();
     }
     
     /**
@@ -927,7 +927,7 @@ public class Helper {
             return null;
         }
         
-        return new UUID(tag.getLong(key1), tag.getLong(key + "Least"));
+        return new UUID(tag.getLong(key1).get(), tag.getLong(key + "Least").get());
     }
     
     public static Vec3 getFlippedVec(Vec3 vec, Vec3 flippingAxis) {
@@ -1466,9 +1466,9 @@ public class Helper {
         if (tag instanceof ListTag listTag) {
             if (listTag.getElementType() == Tag.TAG_DOUBLE && listTag.size() == 3) {
                 return new Vec3(
-                    listTag.getDouble(0),
-                    listTag.getDouble(1),
-                    listTag.getDouble(2)
+                    listTag.getDouble(0).get(),
+                    listTag.getDouble(1).get(),
+                    listTag.getDouble(2).get()
                 );
             }
         }

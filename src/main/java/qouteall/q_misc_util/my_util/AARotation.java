@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,9 +65,9 @@ public enum AARotation {
         this.transformedX = transformedX;
         this.transformedY = dirCrossProduct(transformedZ, transformedX);
         matrix = new IntMatrix3(
-            this.transformedX.getNormal(),
-            this.transformedY.getNormal(),
-            this.transformedZ.getNormal()
+            this.transformedX.getUnitVec3i(),
+            this.transformedY.getUnitVec3i(),
+            this.transformedZ.getUnitVec3i()
         );
         quaternion = matrix.toQuaternion();
     }
@@ -76,22 +77,27 @@ public enum AARotation {
     }
     
     public Direction transformDirection(Direction direction) {
-        BlockPos transformedVec = transform(direction.getNormal());
-        return Direction.fromDelta(
+        BlockPos transformedVec = transform(direction.getUnitVec3i());
+        /*return Direction.fromDelta(
             transformedVec.getX(),
             transformedVec.getY(),
             transformedVec.getZ()
-        );
+        );*/
+        return Direction.getApproximateNearest(Vec3.atLowerCornerOf(transformedVec));
     }
     
     @NotNull
     public static Direction dirCrossProduct(Direction a, Direction b) {
         Validate.isTrue(a.getAxis() != b.getAxis());
-        Direction result = Direction.fromDelta(
+        /*Direction result = Direction.fromDelta(
             a.getStepY() * b.getStepZ() - a.getStepZ() * b.getStepY(),
             a.getStepZ() * b.getStepX() - a.getStepX() * b.getStepZ(),
             a.getStepX() * b.getStepY() - a.getStepY() * b.getStepX()
-        );
+        );*/
+        Direction result = Direction.getApproximateNearest(
+                a.getStepY() * b.getStepZ() - a.getStepZ() * b.getStepY(),
+                a.getStepZ() * b.getStepX() - a.getStepX() * b.getStepZ(),
+                a.getStepX() * b.getStepY() - a.getStepY() * b.getStepX());
         Validate.notNull(result);
         return result;
     }

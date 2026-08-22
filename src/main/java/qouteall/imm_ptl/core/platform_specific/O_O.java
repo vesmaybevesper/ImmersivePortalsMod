@@ -223,7 +223,7 @@ public class O_O {
         if (parts.length != 2) {
             return null;
         }
-        return McHelper.newResourceLocation(parts[0], parts[1]);
+        return McHelper.newIdentifier(parts[0], parts[1]);
     }
     
     @Nullable

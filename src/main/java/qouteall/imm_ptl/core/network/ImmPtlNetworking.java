@@ -95,7 +95,7 @@ public class ImmPtlNetworking {
     ) implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<GlobalPortalSyncPacket> TYPE =
             new CustomPacketPayload.Type<>(
-                McHelper.newResourceLocation("imm_ptl:upd_glb_ptl")
+                McHelper.newIdentifier("imm_ptl:upd_glb_ptl")
             );
         
         public static final StreamCodec<FriendlyByteBuf, GlobalPortalSyncPacket> CODEC = StreamCodec.of(
@@ -143,7 +143,7 @@ public class ImmPtlNetworking {
     ) implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<PortalSyncPacket> TYPE =
             new CustomPacketPayload.Type<>(
-                McHelper.newResourceLocation("imm_ptl:spawn_portal")
+                McHelper.newIdentifier("imm_ptl:spawn_portal")
             );
         
         public static final StreamCodec<RegistryFriendlyByteBuf, PortalSyncPacket> CODEC = StreamCodec.of(

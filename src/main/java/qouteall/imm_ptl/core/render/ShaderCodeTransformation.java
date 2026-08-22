@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import qouteall.imm_ptl.core.IPGlobal;
 import qouteall.imm_ptl.core.McHelper;
-import qouteall.q_misc_util.Helper;
 
 import java.util.List;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class ShaderCodeTransformation {
         if (IPGlobal.enableClippingMechanism) {
             Yaml yaml = new Yaml();
             
-            String yamlStr = McHelper.readTextResource(McHelper.newResourceLocation(
+            String yamlStr = McHelper.readTextResource(McHelper.newIdentifier(
                 "immersive_portals:shaders/shader_transformation.yaml"
             ));
             ConfigsObj configsObj = yaml.loadAs(yamlStr, ConfigsObj.class);

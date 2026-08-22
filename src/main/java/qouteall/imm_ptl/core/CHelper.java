@@ -172,7 +172,7 @@ public class CHelper {
                 return null;
             }
             
-            ResourceLocation modIconPath = McHelper.newResourceLocation(
+            ResourceLocation modIconPath = McHelper.newIdentifier(
                 modIconLocation.getNamespace(),
                 modIconLocation.getPath()
             );

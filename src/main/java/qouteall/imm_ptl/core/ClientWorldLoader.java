@@ -616,7 +616,7 @@ public class ClientWorldLoader {
             Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
             
             for (Map.Entry<String, Integer> entry : idMap.entrySet()) {
-                ResourceLocation id = McHelper.newResourceLocation(entry.getKey());
+                ResourceLocation id = McHelper.newIdentifier(entry.getKey());
                 int expectedId = entry.getValue();
                 
                 if (biomes.getId(biomes.get(id)) != expectedId) {
