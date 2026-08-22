@@ -46,7 +46,7 @@
   "depends": {
     "fabricloader": ">=0.19.3",
     "fabric-api": ">=0.116.15",
-    "minecraft": ["1.21", "1.21.1"],
+    "minecraft": ["1.21.1"],
     "dimlib": "*"
   },
   "breaks": {
@@ -64,9 +64,7 @@
   },
   "custom": {
     "modmenu": {
-      "links": {
-        "modmenu.discord": "https://discord.gg/BZxgURK"
-      }
+      "links": {}
     },
     "fabric-renderer-indigo:force_compatibility": true,
     "lithium:options": {
