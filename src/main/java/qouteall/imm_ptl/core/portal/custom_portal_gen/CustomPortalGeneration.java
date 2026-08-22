@@ -5,15 +5,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -107,7 +107,7 @@ public class CustomPortalGeneration {
     public final List<String> postInvokeCommands;
     public final List<List<String>> commandsOnGenerated;
     
-    public ResourceLocation identifier = null;
+    public Identifier identifier = null;
     
     public CustomPortalGeneration(
         List<ResourceKey<Level>> fromDimensions, ResourceKey<Level> toDimension,
@@ -190,7 +190,7 @@ public class CustomPortalGeneration {
     ) implements InitializationResult {
         @Override
         public String toString() {
-            return "Destination dimension %s not loaded".formatted(dimId.location());
+            return "Destination dimension %s not loaded".formatted(dimId.identifier());
         }
     }
     
@@ -200,7 +200,7 @@ public class CustomPortalGeneration {
         @Override
         public String toString() {
             return "No source dimension is loaded %s"
-                .formatted(srcDimIds.stream().map(ResourceKey::location).collect(Collectors.toList()));
+                .formatted(srcDimIds.stream().map(ResourceKey::identifier).collect(Collectors.toList()));
         }
     }
     
@@ -258,7 +258,7 @@ public class CustomPortalGeneration {
         ServerLevel toWorld = MiscHelper.getServer().getLevel(destDimension);
         
         if (toWorld == null) {
-            Helper.err("Missing dimension " + destDimension.location());
+            Helper.err("Missing dimension " + destDimension.identifier());
             return false;
         }
         

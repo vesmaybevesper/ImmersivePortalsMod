@@ -7,7 +7,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -17,9 +16,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ChunkMap;
@@ -28,7 +28,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.AbortableIterationConsumer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -64,6 +66,7 @@ import qouteall.q_misc_util.my_util.IntBox;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -86,12 +89,12 @@ public class McHelper {
     
     public static final Placeholder placeholder = new Placeholder();
     
-    public static ResourceLocation newResourceLocation(String a, String b) {
-        return ResourceLocation.fromNamespaceAndPath(a, b);
+    public static Identifier newIdentifier(String a, String b) {
+        return Identifier.fromNamespaceAndPath(a, b);
     }
     
-    public static ResourceLocation newResourceLocation(String a) {
-        return ResourceLocation.parse(a);
+    public static Identifier newIdentifier(String a) {
+        return Identifier.parse(a);
     }
     
     @Deprecated
@@ -239,8 +242,7 @@ public class McHelper {
     @SuppressWarnings("JavadocReference")
     @IPVanillaCopy
     public static int getPlayerLoadDistance(ServerPlayer player) {
-        assert player.getServer() != null;
-        int loadDistanceOnServer = getLoadDistanceOnServer(player.getServer());
+        int loadDistanceOnServer = getLoadDistanceOnServer(player.level().getServer());
         return Mth.clamp(player.requestedViewDistance(), 2, loadDistanceOnServer);
     }
     
@@ -396,7 +398,8 @@ public class McHelper {
     
     
     public static Portal copyEntity(Portal portal) {
-        Portal newPortal = ((Portal) portal.getType().create(portal.level()));
+        // maybe the wrong spawn reason for a portal, but lets see how it behaves
+        Portal newPortal = ((Portal) portal.getType().create(portal.level(), EntitySpawnReason.DIMENSION_TRAVEL));
         
         Validate.notNull(newPortal);
         
@@ -421,11 +424,7 @@ public class McHelper {
     }
     
     public static MutableComponent getLinkText(String link) {
-        return Component.literal(link).withStyle(
-            style -> style.withClickEvent(new ClickEvent(
-                ClickEvent.Action.OPEN_URL, link
-            )).withUnderlined(true)
-        );
+        return Component.literal(link).setStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(URI.create(link))).withUnderlined(true));
     }
     
     public static void validateOnServerThread() {
@@ -434,7 +433,7 @@ public class McHelper {
     
     public static void invokeCommandAs(Entity commandSender, List<String> commandList) {
         CommandSourceStack commandSource = commandSender.createCommandSourceStack().withPermission(2).withSuppressedOutput();
-        MinecraftServer server = commandSender.getServer();
+        MinecraftServer server = commandSender.level().getServer();
         assert server != null;
         Commands commandManager = server.getCommands();
         
@@ -740,8 +739,8 @@ public class McHelper {
     }
     
     
-    public static ResourceLocation dimensionTypeId(ResourceKey<Level> dimType) {
-        return dimType.location();
+    public static Identifier dimensionTypeId(ResourceKey<Level> dimType) {
+        return dimType.identifier();
     }
     
     public static <T> String serializeToJson(T object, Codec<T> codec) {
@@ -852,7 +851,7 @@ public class McHelper {
     ) {
         ServerLevel world = server.getLevel(dim);
         if (world == null) {
-            throw new RuntimeException("Missing dimension " + dim.location());
+            throw new RuntimeException("Missing dimension " + dim.identifier());
         }
         return world;
     }
@@ -862,11 +861,11 @@ public class McHelper {
     }
     
     public static int getMinY(LevelAccessor world) {
-        return world.getMinBuildHeight();
+        return world.getMinY();
     }
     
     public static int getMaxYExclusive(LevelAccessor world) {
-        return world.getMaxBuildHeight();
+        return world.getMaxY();
     }
     
     public static int getMaxContentYExclusive(LevelAccessor world) {
@@ -874,11 +873,11 @@ public class McHelper {
     }
     
     public static int getMinSectionY(LevelAccessor world) {
-        return world.getMinSection();
+        return world.getMinSectionY();
     }
     
     public static int getMaxSectionYExclusive(LevelAccessor world) {
-        return world.getMaxSection();
+        return world.getMaxSectionY();
     }
     
     public static int getYSectionNumber(LevelAccessor world) {
@@ -893,7 +892,7 @@ public class McHelper {
         );
     }
     
-    public static String readTextResource(ResourceLocation identifier) {
+    public static String readTextResource(Identifier identifier) {
         String result = null;
         try {
             InputStream inputStream =
@@ -944,8 +943,8 @@ public class McHelper {
      * TODO possibly infer dimension name from dimension type
      */
     public static Component getDimensionName(ResourceKey<Level> dimension) {
-        String namespace = dimension.location().getNamespace();
-        String path = dimension.location().getPath();
+        String namespace = dimension.identifier().getNamespace();
+        String path = dimension.identifier().getPath();
         String translationkey = "dimension." + namespace + "." + path;
         MutableComponent component = Component.translatable(translationkey);
         
@@ -957,7 +956,7 @@ public class McHelper {
                     "imm_ptl.a_dimension_of",
                     modName != null ? modName : namespace
                 )
-                .append(" (" + dimension.location() + ")");
+                .append(" (" + dimension.identifier() + ")");
         }
         
         return component;
