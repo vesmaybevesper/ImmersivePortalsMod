@@ -56,11 +56,12 @@
     "resolutioncontrol": "*",
     "canvas": "*",
     "cardboard": "*",
-    "iris": ["<1.8.13", ">1.8.15"],
-    "sodium": ["<0.8.0", ">0.8.14"],
+    "iris": ["<1.8.14-beta.1", ">1.8.14"],
+    "sodium": ["<0.8.13-beta.2", ">0.8.13"],
     "gravity_api": "*",
     "vmp": "*",
-    "veil": "*"
+    "veil": "*",
+    "cardinal-components-base": "<6.1.3"
   },
   "custom": {
     "modmenu": {
