@@ -33,18 +33,7 @@ import qouteall.q_misc_util.my_util.LongBlockPos;
 import qouteall.q_misc_util.my_util.RayTraceResult;
 
 import java.lang.reflect.Method;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -1461,16 +1450,26 @@ public class Helper {
         listTag.add(DoubleTag.valueOf(vec.z));
         return listTag;
     }
-    
+
+    // could be wrong my NBT experience is pretty limited, guess we'll find out lol
     public static @Nullable Vec3 vec3FromListTag(Tag tag) {
-        if (tag instanceof ListTag listTag) {
-            if (listTag.getElementType() == Tag.TAG_DOUBLE && listTag.size() == 3) {
+        if (tag instanceof ListTag listTag && listTag.size() == 3
+                && listTag.get(0).getId() == Tag.TAG_DOUBLE
+                && listTag.get(1).getId() == Tag.TAG_DOUBLE
+                && listTag.get(2).getId() == Tag.TAG_DOUBLE) {
+            return new Vec3(
+                    listTag.getDouble(0).orElseThrow(),
+                    listTag.getDouble(1).orElseThrow(),
+                    listTag.getDouble(2).orElseThrow()
+            );
+
+            /*if (listTag.getElementType() == Tag.TAG_DOUBLE && listTag.size() == 3) {
                 return new Vec3(
-                    listTag.getDouble(0).get(),
-                    listTag.getDouble(1).get(),
-                    listTag.getDouble(2).get()
+                    listTag.getDouble(0).orElseThrow(),
+                    listTag.getDouble(1).orElseThrow(),
+                    listTag.getDouble(2).orElseThrow()
                 );
-            }
+            }*/
         }
         
         return null;
