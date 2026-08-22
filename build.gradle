@@ -3,7 +3,7 @@ plugins {
 
     id 'maven-publish'
 
-    id "me.modmuss50.mod-publish-plugin" version "0.3.5"
+    id "me.modmuss50.mod-publish-plugin" version "2.2.0"
     // https://modmuss50.github.io/mod-publish-plugin/
 }
 
@@ -226,8 +226,10 @@ publishMods {
     version = "v${project.mod_version}-mc${project.minecraft_version}"
 
     curseforge {
-        projectId = "332273"
+        projectId = "1663951"
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        client = true
+        server = true
         minecraftVersions.add(minecraft_version)
 
         requires {
@@ -235,8 +237,9 @@ publishMods {
         }
     }
     modrinth {
-        projectId = "zJpHMkdD"
+        projectId = "aD9oXNWl"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        enviroment
         minecraftVersions.add(minecraft_version)
 
         requires {
@@ -244,7 +247,7 @@ publishMods {
         }
     }
     github {
-        repository = "iPortalTeam/ImmersivePortalsMod"
+        repository = "vesmaybevesper/ImmersivePortalsMod"
         accessToken = providers.environmentVariable("GITHUB_TOKEN")
         commitish = "${project.git_branch}"
     }
