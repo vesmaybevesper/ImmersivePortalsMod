@@ -3,9 +3,9 @@ package qouteall.imm_ptl.core.mixin.client.render;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ViewArea;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
@@ -41,11 +41,11 @@ public class MixinLevelRenderer_Optional {
         ),
         require = 0
     )
-    private RenderType redirectGetTranslucent() {
+    private RenderTypes redirectGetTranslucent() {
         if (PortalRendering.isRendering()) {
             return null;
         }
-        return RenderType.translucent();
+        return RenderTypes.translucent();
     }
     
     //the camera position is used for translucent sort
@@ -66,7 +66,7 @@ public class MixinLevelRenderer_Optional {
                 return;
             }
         }
-        chunkBuilder.setCamera(cameraPosition);
+        chunkBuilder.setCameraPosition(cameraPosition);
     }
     
     @Inject(
@@ -78,7 +78,7 @@ public class MixinLevelRenderer_Optional {
         require = 0
     )
     private void onGetShaderInRenderingLayer(
-        RenderType renderType, double x, double y, double z, Matrix4f projectionMatrix, Matrix4f frustrumMatrix, CallbackInfo ci
+        RenderTypes renderType, double x, double y, double z, Matrix4f projectionMatrix, Matrix4f frustrumMatrix, CallbackInfo ci
     ) {
         FrontClipping.updateClippingEquationUniformForCurrentShader(false);
     }

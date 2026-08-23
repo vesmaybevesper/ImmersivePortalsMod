@@ -5,12 +5,13 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +24,8 @@ public class ScaleUtils {
     /**
      * It's the id of attribute modifier of scale.
      */
-    public static final ResourceLocation IPORTAL_SCALING =
-        ResourceLocation.fromNamespaceAndPath("iportal", "scaling");
+    public static final Identifier IPORTAL_SCALING =
+        Identifier.fromNamespaceAndPath("iportal", "scaling");
     
     @Environment(EnvType.CLIENT)
     public static void onClientPlayerTeleported(Portal portal) {
@@ -151,16 +152,17 @@ public class ScaleUtils {
         double oldScale = ScaleUtils.getIPortalScaling(entity);
         double newScale = transformScale(portal, oldScale);
         
-        if (!entity.level().isClientSide && isScaleIllegal(newScale)) {
+        if (!entity.level().isClientSide() && isScaleIllegal(newScale)) {
             newScale = 1;
-            entity.sendSystemMessage(
-                Component.literal("Scale out of range")
+            if (entity instanceof Player player)
+                player.displayClientMessage(
+                    Component.literal("Scale out of range"), false
             );
         }
         
         ScaleUtils.setIPortalScaling(entity, newScale);
         
-        if (!entity.level().isClientSide) {
+        if (!entity.level().isClientSide()) {
             McHelper.setEyePos(entity, eyePos, lastTickEyePos);
             McHelper.updateBoundingBox(entity);
         }

@@ -14,10 +14,11 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
+import net.minecraft.server.level.progress.LevelLoadListener;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.TicketStorage;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -39,6 +40,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.jetbrains.annotations.NotNull;
 import qouteall.imm_ptl.peripheral.mixin.common.alternate_dimension.IEChunkAccess_AlternateDim;
@@ -54,7 +56,7 @@ import java.util.stream.Stream;
 
 /**
  * It extends NoiseBasedChunkGenerator, because in
- * {@link ChunkMap#ChunkMap(ServerLevel, LevelStorageSource.LevelStorageAccess, DataFixer, StructureTemplateManager, Executor, BlockableEventLoop, LightChunkGetter, ChunkGenerator, ChunkProgressListener, ChunkStatusUpdateListener, Supplier, int, boolean)}
+ * {@link ChunkMap#ChunkMap(ServerLevel serverLevel, LevelStorageSource.LevelStorageAccess levelStorageAccess, DataFixer dataFixer, StructureTemplateManager structureTemplateManager, Executor executor, BlockableEventLoop<Runnable> blockableEventLoop, LightChunkGetter lightChunkGetter, ChunkGenerator chunkGenerator, ChunkStatusUpdateListener chunkStatusUpdateListener, Supplier<DimensionDataStorage> supplier, TicketStorage ticketStorage, int i, boolean bl)}
  * it uses instanceof to initialize random source.
  */
 public class NormalSkylandGenerator extends NoiseBasedChunkGenerator {
@@ -209,7 +211,7 @@ public class NormalSkylandGenerator extends NoiseBasedChunkGenerator {
             @Override
             public Stream<Holder.Reference<StructureSet>> listElements() {
                 return structureSetLookup.listElements().filter(
-                    holder -> !holder.key().location().getPath().equals("mineshafts")
+                    holder -> !holder.key().identifier().getPath().equals("mineshafts")
                 );
             }
             

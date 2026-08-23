@@ -1,7 +1,7 @@
 package qouteall.imm_ptl.core.mixin.client.render.shader;
 
+import com.mojang.blaze3d.opengl.GlProgram;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class MixinGameRenderer_Shaders {
     @Shadow
     @Final
-    private Map<String, ShaderInstance> shaders;
+    private Map<String, GlProgram> shaders;
     
     @Inject(
         method = "reloadShaders", at = @At("RETURN")

@@ -1,19 +1,16 @@
 package qouteall.imm_ptl.core.compat.mixin.iris;
 
-import com.mojang.blaze3d.shaders.Program;
+import com.mojang.blaze3d.shaders.ShaderType;
 import net.irisshaders.iris.pipeline.transform.PatchShaderType;
 import net.irisshaders.iris.pipeline.transform.TransformPatcher;
 import net.irisshaders.iris.pipeline.transform.parameter.Parameters;
-import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import qouteall.imm_ptl.core.render.ShaderCodeTransformation;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Pseudo
@@ -32,7 +29,7 @@ public class MixinIrisTransformPatcher {
         Map<PatchShaderType, String> map = cir.getReturnValue();
         String code = map.get(PatchShaderType.VERTEX);
         if (code != null) {
-            String transformed = ShaderCodeTransformation.transform(Program.Type.VERTEX, "iris_" + name, code);
+            String transformed = ShaderCodeTransformation.transform(ShaderType.VERTEX, "iris_" + name, code);
             map.put(PatchShaderType.VERTEX, transformed);
         }
     }

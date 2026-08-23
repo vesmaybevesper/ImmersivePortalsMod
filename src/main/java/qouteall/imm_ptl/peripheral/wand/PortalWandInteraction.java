@@ -8,7 +8,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -236,7 +238,7 @@ public class PortalWandInteraction {
             }
         }
         
-        Portal portal = Portal.ENTITY_TYPE.create(McHelper.getServerWorld(firstSideDimension));
+        Portal portal = Portal.ENTITY_TYPE.create(McHelper.getServerWorld(firstSideDimension), EntitySpawnReason.TRIGGERED);
         Validate.notNull(portal);
         portal.setOriginPos(
             firstSideLeftBottom
@@ -522,7 +524,7 @@ public class PortalWandInteraction {
     }
     
     private static boolean canPlayerUsePortalWand(ServerPlayer player) {
-        return player.hasPermissions(2)
+        return player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)
             || (IPGlobal.easeCreativePermission && player.isCreative())
             || (IPConfig.getConfig().portalWandUsableOnSurvivalMode
             && player.gameMode.getGameModeForPlayer() == GameType.SURVIVAL);
@@ -815,8 +817,9 @@ public class PortalWandInteraction {
             player.sendSystemMessage(Component.literal("Too far away from the portal"));
             return;
         }
-        
-        Portal portal = Portal.ENTITY_TYPE.create(player.level());
+
+        // i'm just winging the spawn reason additions based on what feels the most correct
+        Portal portal = Portal.ENTITY_TYPE.create(player.level(), EntitySpawnReason.TRIGGERED);
         assert portal != null;
         
         portal.readPortalDataFromNbt(copyingSession.portalData);

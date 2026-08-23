@@ -6,8 +6,8 @@ import net.minecraft.network.protocol.game.ClientboundSetTimePacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.apache.commons.lang3.Validate;
 import qouteall.imm_ptl.core.McHelper;
 import qouteall.imm_ptl.core.network.PacketRedirection;
@@ -53,8 +53,8 @@ public class WorldInfoSender {
             new ClientboundSetTimePacket(
                 world.getGameTime(),
                 world.getDayTime(),
-                world.getGameRules().getBoolean(
-                    GameRules.RULE_DAYLIGHT
+                world.getGameRules().get(
+                    GameRules.ADVANCE_TIME
                 )
             )
         );

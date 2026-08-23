@@ -1,7 +1,7 @@
 package qouteall.imm_ptl.core.mixin.client.render.shader;
 
+import com.mojang.blaze3d.opengl.GlShaderModule;
 import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
-import com.mojang.blaze3d.shaders.Program;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
-@Mixin(value = Program.class)
+@Mixin(value = GlShaderModule.class)
 public class MixinProgram {
     // The redirect uses method arguments.
     // Iris also injects that method and uses local capture, so cannot overwrite.

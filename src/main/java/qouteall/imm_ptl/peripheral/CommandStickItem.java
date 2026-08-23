@@ -17,6 +17,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +25,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -33,6 +35,7 @@ import qouteall.imm_ptl.core.commands.PortalCommand;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class CommandStickItem extends Item {
@@ -124,8 +127,9 @@ public class CommandStickItem extends Item {
                 LOGGER.error("Missing component in command stick item {}", stack);
                 return;
             }
-            
-            CommandSourceStack commandSource = player.createCommandSourceStack().withPermission(2);
+
+            // i literally spent like 30 minutes replacing serverlevel calls and immediatly forgot how to do it, ill come back
+            CommandSourceStack commandSource = player.createCommandSourceStackForNameResolution().withPermission(2);
             
             MinecraftServer server = player.level().getServer();
             assert server != null;
@@ -150,18 +154,17 @@ public class CommandStickItem extends Item {
             return true;// any player regardless of gamemode can use
         }
         else {
-            return player.hasPermissions(2) || player.isCreative();
+            return player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER) || player.isCreative();
         }
     }
     
     @Override
     public void appendHoverText(
-        ItemStack stack, Item.TooltipContext tooltipContext,
-        List<Component> tooltip, TooltipFlag tooltipFlag
+            ItemStack itemStack, TooltipContext tooltipContext, TooltipDisplay tooltipDisplay, Consumer<Component> consumer, TooltipFlag tooltipFlag
     ) {
-        super.appendHoverText(stack, tooltipContext, tooltip, tooltipFlag);
+        super.appendHoverText(itemStack, tooltipContext, tooltipDisplay, consumer, tooltipFlag);
         
-        Data data = stack.get(COMPONENT_TYPE);
+        Data data = itemStack.get(COMPONENT_TYPE);
         
         if (data == null) {
             return;
@@ -170,16 +173,17 @@ public class CommandStickItem extends Item {
         Iterable<String> splitCommand = Splitter.fixedLength(40).split(data.command);
         
         for (String commandPortion : splitCommand) {
-            tooltip.add(Component.literal(commandPortion).withStyle(ChatFormatting.GOLD));
+            consumer.accept(Component.literal(commandPortion).withStyle(ChatFormatting.GOLD));
         }
         
         for (String descriptionTranslationKey : data.descriptionTranslationKeys) {
-            tooltip.add(Component.translatable(descriptionTranslationKey).withStyle(ChatFormatting.AQUA));
+            consumer.accept(Component.translatable(descriptionTranslationKey).withStyle(ChatFormatting.AQUA));
         }
         
-        tooltip.add(Component.translatable("imm_ptl.command_stick").withStyle(ChatFormatting.GRAY));
+        consumer.accept(Component.translatable("imm_ptl.command_stick").withStyle(ChatFormatting.GRAY));
     }
-    
+
+    // this is final now, i think i can just set description id here and itll get called but im not 100%
     @Override
     public @NotNull String getDescriptionId(ItemStack stack) {
         Data data = stack.get(COMPONENT_TYPE);

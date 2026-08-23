@@ -81,20 +81,20 @@ public class PortalExtension {
     
     private void readFromNbt(CompoundTag compoundTag) {
         if (compoundTag.contains("motionAffinity")) {
-            motionAffinity = compoundTag.getDouble("motionAffinity");
+            motionAffinity = compoundTag.getDouble("motionAffinity").orElseThrow();
         }
         else {
             motionAffinity = 0;
         }
         if (compoundTag.contains("adjustPositionAfterTeleport")) {
-            adjustPositionAfterTeleport = compoundTag.getBoolean("adjustPositionAfterTeleport");
+            adjustPositionAfterTeleport = compoundTag.getBoolean("adjustPositionAfterTeleport").orElseThrow();
         }
         else {
             adjustPositionAfterTeleport = true;
         }
         
         if (compoundTag.contains("bindCluster")) {
-            bindCluster = compoundTag.getBoolean("bindCluster");
+            bindCluster = compoundTag.getBoolean("bindCluster").orElseThrow();
         }
         else {
             bindCluster = true;

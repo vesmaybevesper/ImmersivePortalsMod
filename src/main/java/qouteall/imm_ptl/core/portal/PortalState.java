@@ -86,8 +86,8 @@ public class PortalState {
     
     public CompoundTag toTag() {
         CompoundTag tag = new CompoundTag();
-        tag.putString("fromWorld", fromWorld.location().toString());
-        tag.putString("toWorld", toWorld.location().toString());
+        tag.putString("fromWorld", fromWorld.identifier().toString());
+        tag.putString("toWorld", toWorld.identifier().toString());
         Helper.putVec3d(tag, "fromPos", fromPos);
         Helper.putVec3d(tag, "toPos", toPos);
         tag.putDouble("scaling", scaling);
@@ -101,17 +101,17 @@ public class PortalState {
     }
     
     public static PortalState fromTag(CompoundTag tag) {
-        ResourceKey<Level> fromWorld = Helper.dimIdToKey(tag.getString("fromWorld"));
-        ResourceKey<Level> toWorld = Helper.dimIdToKey(tag.getString("toWorld"));
+        ResourceKey<Level> fromWorld = Helper.dimIdToKey(tag.getString("fromWorld").orElseThrow());
+        ResourceKey<Level> toWorld = Helper.dimIdToKey(tag.getString("toWorld").orElseThrow());
         Vec3 fromPos = Helper.getVec3d(tag, "fromPos");
         Vec3 toPos = Helper.getVec3d(tag, "toPos");
-        double scaling = tag.getDouble("scaling");
-        double width = tag.getDouble("width");
-        double height = tag.getDouble("height");
-        double thickness = tag.getDouble("thickness");
-        DQuaternion rotation = DQuaternion.fromTag(tag.getCompound("rotation"));
-        DQuaternion orientation = DQuaternion.fromTag(tag.getCompound("orientation"));
-        boolean isMirror = tag.getBoolean("isMirror");
+        double scaling = tag.getDouble("scaling").orElseThrow();
+        double width = tag.getDouble("width").orElseThrow();
+        double height = tag.getDouble("height").orElseThrow();
+        double thickness = tag.getDouble("thickness").orElseThrow();
+        DQuaternion rotation = DQuaternion.fromTag(tag.getCompound("rotation").orElseThrow());
+        DQuaternion orientation = DQuaternion.fromTag(tag.getCompound("orientation").orElseThrow());
+        boolean isMirror = tag.getBoolean("isMirror").orElseThrow();
         return new PortalState(
             fromWorld, fromPos, toWorld, toPos, scaling, rotation, orientation,
             width, height, thickness, isMirror

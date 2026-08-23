@@ -1,5 +1,6 @@
 package qouteall.imm_ptl.core.render;
 
+import com.mojang.blaze3d.opengl.GlProgram;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.shaders.Uniform;
@@ -140,7 +141,7 @@ public class MyRenderHelper {
     }
     
     public static DrawFbInAreaShader drawFbInAreaShader;
-    public static ShaderInstance portalAreaShader;
+    public static GlProgram portalAreaShader;
     public static ShaderInstance blitScreenNoBlendShader;
     
     public static void drawPortalAreaWithFramebuffer(

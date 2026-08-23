@@ -30,7 +30,7 @@ public class SecondaryFrameBuffer {
             height != fb.viewHeight
         ) {
             fb.resize(
-                width, height, Minecraft.ON_OSX
+                width, height
             );
             fb.checkStatus();
             Helper.log("Secondary Framebuffer resized");

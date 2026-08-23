@@ -1,7 +1,7 @@
 package qouteall.imm_ptl.core.mixin.client.render.optimization;
 
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -23,7 +23,7 @@ public class MixinSectionBufferBuilderPack {
             target = "Lnet/minecraft/client/renderer/RenderType;bufferSize()I"
         )
     )
-    private static int redirectBufferSize(RenderType instance) {
+    private static int redirectBufferSize(RenderTypes instance) {
         if (!IPGlobal.saveMemoryInBufferPack) {
             return instance.bufferSize();
         }

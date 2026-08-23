@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.TextAlignment;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -118,12 +119,13 @@ public class CustomTextOverlay {
             );
         }
         else {
-            multiLineLabelCache.renderLeftAligned(
-                guiGraphics,
+            multiLineLabelCache.visitLines(
+                    TextAlignment.LEFT,
                 10, // x
                 10, // y
                 9, // line height
                 0xffffffff // color
+                    // last line needs to become active text collector
             );
         }
         

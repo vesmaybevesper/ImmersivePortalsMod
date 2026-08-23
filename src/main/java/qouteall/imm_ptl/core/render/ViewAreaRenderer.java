@@ -1,14 +1,13 @@
 package qouteall.imm_ptl.core.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.opengl.GlProgram;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import qouteall.imm_ptl.core.CHelper;
@@ -81,7 +80,7 @@ public class ViewAreaRenderer {
         
         CHelper.enableDepthClamp();
         
-        ShaderInstance shader = MyRenderHelper.portalAreaShader;
+        GlProgram shader = MyRenderHelper.portalAreaShader;
         RenderSystem.setShader(() -> shader);
         
         shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);

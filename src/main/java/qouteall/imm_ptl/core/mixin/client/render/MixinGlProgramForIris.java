@@ -1,7 +1,6 @@
 package qouteall.imm_ptl.core.mixin.client.render;
 
-import com.mojang.blaze3d.shaders.Program;
-import net.minecraft.client.renderer.ShaderInstance;
+import com.mojang.blaze3d.opengl.GlProgram;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -10,8 +9,8 @@ import qouteall.imm_ptl.core.ClientWorldLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mixin(ShaderInstance.class)
-public class MixinShaderInstanceForIris {
+@Mixin(GlProgram.class)
+public class MixinGlProgramForIris {
     // if iris is present, avoid reusing other dimensions' program in cache
     @Redirect(
         method = "Lnet/minecraft/client/renderer/ShaderInstance;getOrCreate(Lnet/minecraft/server/packs/resources/ResourceProvider;Lcom/mojang/blaze3d/shaders/Program$Type;Ljava/lang/String;)Lcom/mojang/blaze3d/shaders/Program;",

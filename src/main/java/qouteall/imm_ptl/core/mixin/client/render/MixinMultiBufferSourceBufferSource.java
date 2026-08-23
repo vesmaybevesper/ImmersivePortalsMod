@@ -1,8 +1,8 @@
 package qouteall.imm_ptl.core.mixin.client.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,10 +13,10 @@ import qouteall.imm_ptl.core.render.context_management.RenderStates;
 @Mixin(MultiBufferSource.BufferSource.class)
 public class MixinMultiBufferSourceBufferSource {
     @Inject(
-        method = "endBatch(Lnet/minecraft/client/renderer/RenderType;)V",
+        method = "endBatch(Lnet/minecraft/client/renderer/rendertype/RenderType;)V",
         at = @At("HEAD")
     )
-    private void onBeginDraw(RenderType layer, CallbackInfo ci) {
+    private void onBeginDraw(RenderType renderType, CallbackInfo ci) {
         if (PortalRendering.isRenderingOddNumberOfMirrors()) {
             RenderStates.shouldForceDisableCull = true;
             GlStateManager._disableCull();
@@ -24,7 +24,7 @@ public class MixinMultiBufferSourceBufferSource {
     }
     
     @Inject(
-        method = "endBatch(Lnet/minecraft/client/renderer/RenderType;)V",
+        method = "endBatch(Lnet/minecraft/client/renderer/rendertype/RenderType;)V",
         at = @At("RETURN")
     )
     private void onEndDraw(RenderType layer, CallbackInfo ci) {
