@@ -62,11 +62,11 @@ public class RotationAnimation implements PortalAnimationDriver {
     private static RotationAnimation deserialize(CompoundTag tag) {
         Vec3 initialOffset = Helper.getVec3d(tag, "initialOffset");
         Vec3 rotationAxis = Helper.getVec3d(tag, "rotationAxis");
-        double degreesPerTick = tag.getDouble("degreesPerTick");
-        long startGameTime = tag.getLong("startGameTime");
-        long endGameTime = tag.getLong("endGameTime");
+        double degreesPerTick = tag.getDouble("degreesPerTick").orElseThrow();
+        long startGameTime = tag.getLong("startGameTime").orElseThrow();
+        long endGameTime = tag.getLong("endGameTime").orElseThrow();
         TimingFunction timingFunction = tag.contains("timingFunction") ?
-            TimingFunction.fromString(tag.getString("timingFunction")) : null;
+            TimingFunction.fromString(tag.getString("timingFunction").orElseThrow()) : null;
         return new RotationAnimation(
             initialOffset, rotationAxis,
             degreesPerTick, startGameTime, endGameTime,

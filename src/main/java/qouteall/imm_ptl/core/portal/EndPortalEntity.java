@@ -259,8 +259,9 @@ public class EndPortalEntity extends Portal {
                 )
             );
         }
-        
-        MinecraftServer server = getServer();
+
+        assert Minecraft.getInstance().level != null;
+        MinecraftServer server = Minecraft.getInstance().level.getServer();
         assert server != null;
         ServerLevel endWorld = server.getLevel(Level.END);
         if (endWorld != null) {
@@ -339,7 +340,8 @@ public class EndPortalEntity extends Portal {
         if (!level().isClientSide()) {
             if (entity instanceof ServerPlayer) {
                 if (IPGlobal.endPortalMode == IPGlobal.EndPortalMode.toObsidianPlatform) {
-                    MinecraftServer server = getServer();
+                    assert Minecraft.getInstance().level != null;
+                    MinecraftServer server = Minecraft.getInstance().level.getServer();
                     assert server != null;
                     ServerLevel endWorld = server.getLevel(Level.END);
                     if (endWorld != null) {

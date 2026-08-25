@@ -33,11 +33,11 @@ public class DefaultPortalAnimation {
     }
     
     public static DefaultPortalAnimation fromNbt(CompoundTag nbt) {
-        String c = nbt.getString("curve");
+        String c = nbt.getString("curve").orElseThrow();
         TimingFunction timingFunction = TimingFunction.fromString(c);
-        int durationTicks = nbt.getInt("durationTicks");
-        boolean inverseScale = nbt.getBoolean("inverseScale");
-        long disableUntil = nbt.getLong("disableUntil");
+        int durationTicks = nbt.getInt("durationTicks").orElseThrow();
+        boolean inverseScale = nbt.getBoolean("inverseScale").orElseThrow();
+        long disableUntil = nbt.getLong("disableUntil").orElseThrow();
         
         return new DefaultPortalAnimation(timingFunction, durationTicks, inverseScale, disableUntil);
     }

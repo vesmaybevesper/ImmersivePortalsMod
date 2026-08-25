@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
 public abstract class MixinMainTarget extends RenderTarget {
     
     public MixinMainTarget(boolean useDepth) {
-        super(useDepth);
+        super("Main", true);
         throw new RuntimeException();
     }
     

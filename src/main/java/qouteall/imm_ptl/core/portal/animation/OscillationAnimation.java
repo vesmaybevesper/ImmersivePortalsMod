@@ -35,9 +35,9 @@ public record OscillationAnimation(
             return null;
         }
         
-        double frequency = tag.getDouble("frequency");
-        long startGameTime = tag.getLong("startGameTime");
-        long cycleCount = tag.getLong("cycleCount");
+        double frequency = tag.getDouble("frequency").orElseThrow();
+        long startGameTime = tag.getLong("startGameTime").orElseThrow();
+        long cycleCount = tag.getLong("cycleCount").orElseThrow();
         
         return new OscillationAnimation(
             vec, frequency, startGameTime, cycleCount

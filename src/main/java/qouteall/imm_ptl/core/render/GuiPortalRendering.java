@@ -101,7 +101,7 @@ public class GuiPortalRendering {
         
         RenderTarget mcFB = Minecraft.getInstance().getMainRenderTarget();
         if (renderTarget.width != mcFB.width || renderTarget.height != mcFB.height) {
-            renderTarget.resize(mcFB.width, mcFB.height, true);
+            renderTarget.resize(mcFB.width, mcFB.height);
             LOGGER.info("Resized Framebuffer for GUI Portal Rendering");
         }
         

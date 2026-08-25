@@ -4,13 +4,17 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.NetherPortalBlock;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import qouteall.imm_ptl.core.IPGlobal;
 import qouteall.imm_ptl.core.platform_specific.O_O;
@@ -67,7 +71,22 @@ public class NetherPortalEntity extends BreakablePortalEntity {
     public void tick() {
         super.tick();
     }
-    
+
+    @Override
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damageSource, float f) {
+        return false;
+    }
+
+    @Override
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+
+    }
+
+    @Override
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+
+    }
+
     @Override
     protected boolean isPortalIntactOnThisSide() {
         

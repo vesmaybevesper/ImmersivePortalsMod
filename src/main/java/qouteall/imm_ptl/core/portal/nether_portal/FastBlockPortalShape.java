@@ -238,7 +238,7 @@ public record FastBlockPortalShape(
     }
     
     public static @Nullable FastBlockPortalShape fromTag(CompoundTag tag) {
-        int axisInt = tag.getInt("axis");
+        int axisInt = tag.getInt("axis").orElseThrow();
         if (axisInt < 0 || axisInt > 2) {
             LOGGER.error("invalid axis {}", tag);
             return null;
@@ -257,9 +257,9 @@ public record FastBlockPortalShape(
         
         int positionNum = numNum / 3;
         
-        int firstPointX = positions.getInt(0);
-        int firstPointY = positions.getInt(1);
-        int firstPointZ = positions.getInt(2);
+        int firstPointX = positions.getInt(0).orElseThrow();
+        int firstPointY = positions.getInt(1).orElseThrow();
+        int firstPointZ = positions.getInt(2).orElseThrow();
         
         IntArrayList areaBlockCoords = new IntArrayList();
         if (axis != Direction.Axis.X) areaBlockCoords.add(firstPointX);
@@ -268,9 +268,9 @@ public record FastBlockPortalShape(
         
         int coordOnAxis = axis.choose(firstPointX, firstPointY, firstPointZ);
         for (int i = 1; i < positionNum; i++) {
-            int x = positions.getInt(i * 3);
-            int y = positions.getInt(i * 3 + 1);
-            int z = positions.getInt(i * 3 + 2);
+            int x = positions.getInt(i * 3).orElseThrow();
+            int y = positions.getInt(i * 3 + 1).orElseThrow();
+            int z = positions.getInt(i * 3 + 2).orElseThrow();
             
             if (axis.choose(x, y, z) != coordOnAxis) {
                 LOGGER.error("invalid block position in {} at {}", tag, i);

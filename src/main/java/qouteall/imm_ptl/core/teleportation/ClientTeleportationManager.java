@@ -11,6 +11,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundRespawnPacket;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -139,7 +140,7 @@ public class ClientTeleportationManager {
             return;
         }
         
-        client.getProfiler().push("ip_teleport");
+        Profiler.get().push("ip_teleport");
         
         ClientPortalAnimationManagement.foreachCustomAnimatedPortals(
             portal -> {
@@ -199,7 +200,7 @@ public class ClientTeleportationManager {
         lastRecordStableTickTime = StableClientTimer.getStableTickTime();
         lastRecordStablePartialTicks = StableClientTimer.getStablePartialTicks();
         
-        client.getProfiler().pop();
+        Profiler.get().pop();
     }
     
     private static record TeleportationRec(
@@ -291,9 +292,9 @@ public class ClientTeleportationManager {
             Portal portal = teleportation.portal();
             Vec3 collidingPos = teleportation.worldCollisionPoint();
             
-            client.getProfiler().push("portal_teleport");
+            Profiler.get().push("portal_teleport");
             teleportPlayer(teleportation, partialTicks);
-            client.getProfiler().pop();
+            Profiler.get().pop();
             
             boolean allowOverlappedTeleport = portal.respectParallelOrientedPortal();
             
@@ -430,7 +431,7 @@ public class ClientTeleportationManager {
     }
     
     public static void forceTeleportPlayer(ResourceKey<Level> toDimension, Vec3 destination) {
-        LOGGER.info("client player force teleported {} {}", toDimension.location(), destination);
+        LOGGER.info("client player force teleported {} {}", toDimension.identifier(), destination);
         
         ClientLevel fromWorld = client.level;
         assert fromWorld != null;
@@ -515,8 +516,8 @@ public class ClientTeleportationManager {
         
         Helper.log(String.format(
             "Client Changed Dimension from %s to %s time: %s age: %s",
-            fromDimension.location(),
-            toDimension.location(),
+            fromDimension.identifier(),
+            toDimension.identifier(),
             tickTimeForTeleportation,
             player.tickCount
         ));
@@ -634,7 +635,7 @@ public class ClientTeleportationManager {
             return;
         }
         
-        Vec3 levitationVec = Vec3.atLowerCornerOf(levitationDir.getNormal());
+        Vec3 levitationVec = Vec3.atLowerCornerOf(levitationDir.getUnitVec3i());
         
         Vec3 offset = levitationVec.scale(delta);
         

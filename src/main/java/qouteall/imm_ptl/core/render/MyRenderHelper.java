@@ -1,20 +1,19 @@
 package qouteall.imm_ptl.core.render;
 
 import com.mojang.blaze3d.opengl.GlProgram;
+import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.opengl.Uniform;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.util.Mth;
@@ -25,11 +24,11 @@ import qouteall.imm_ptl.core.CHelper;
 import qouteall.imm_ptl.core.ClientWorldLoader;
 import qouteall.imm_ptl.core.McHelper;
 import qouteall.imm_ptl.core.miscellaneous.IPVanillaCopy;
+import qouteall.imm_ptl.core.mixin.client.accessor.RenderPipelinesAccessor;
 import qouteall.imm_ptl.core.portal.Portal;
 import qouteall.imm_ptl.core.render.context_management.PortalRendering;
 import qouteall.imm_ptl.core.render.context_management.RenderStates;
 import qouteall.imm_ptl.core.render.context_management.WorldRenderInfo;
-import qouteall.q_misc_util.my_util.SignalBiArged;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -39,8 +38,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import static org.lwjgl.opengl.GL11.GL_BACK;
@@ -55,12 +54,16 @@ import static org.lwjgl.opengl.GL11.glReadPixels;
 public class MyRenderHelper {
     
     public static final Minecraft client = Minecraft.getInstance();
+
+    public static final
+
+    public static final RenderPipeline BLIT_SCREEN_NOBLEND = RenderPipelinesAccessor.register();
     
-    public static final SignalBiArged<ResourceProvider, Consumer<ShaderInstance>> loadShaderSignal =
-        new SignalBiArged<>();
+    /*public static final SignalBiArged<ResourceProvider, Consumer<ShaderInstance>> loadShaderSignal =
+        new SignalBiArged<>();*/
     
     public static void init() {
-        
+    /*
         loadShaderSignal.connect((resourceManager, resultConsumer) -> {
             try {
                 DrawFbInAreaShader shader = new DrawFbInAreaShader(
@@ -104,16 +107,16 @@ public class MyRenderHelper {
             catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        });
+        });*/
     }
     
     // vanilla hardcodes the shader namespace to be "minecraft"
     private static ResourceProvider getResourceFactory(ResourceProvider resourceManager) {
         ResourceProvider resourceFactory = new ResourceProvider() {
             @Override
-            public Optional<Resource> getResource(ResourceLocation resourceLocation) {
-                ResourceLocation corrected = McHelper.newIdentifier(
-                    "immersive_portals", resourceLocation.getPath());
+            public Optional<Resource> getResource(Identifier identifier) {
+                Identifier corrected = McHelper.newIdentifier(
+                    "immersive_portals", identifier.getPath());
                 return resourceManager.getResource(corrected);
             }
         };
@@ -140,9 +143,9 @@ public class MyRenderHelper {
         }
     }
     
-    public static DrawFbInAreaShader drawFbInAreaShader;
+    /*public static DrawFbInAreaShader drawFbInAreaShader;
     public static GlProgram portalAreaShader;
-    public static ShaderInstance blitScreenNoBlendShader;
+    public static ShaderInstance blitScreenNoBlendShader;*/
     
     public static void drawPortalAreaWithFramebuffer(
         Portal portal,
@@ -155,10 +158,16 @@ public class MyRenderHelper {
         GlStateManager._enableDepthTest();
         GlStateManager._depthMask(true);
         GlStateManager._viewport(0, 0, textureProvider.width, textureProvider.height);
-        
-        DrawFbInAreaShader shader = drawFbInAreaShader;
-        shader.setSampler("DiffuseSampler", textureProvider.getColorTextureId());
-        shader.loadWidthHeight(textureProvider.width, textureProvider.height);
+
+        RenderSystem.setShader(drawFbInAreaShader);
+        GlProgram shader = RenderSystem.getShader();
+
+        Objects.requireNonNull(shader, "shader is null")
+                .bindSampler("DiffuseSampler", textureProvider.getColorTextureId());
+        Objects.requireNonNull(shader.getUniform("w"), "no w")
+                .set(textureProvider.width);
+        Objects.requireNonNull(shader.getUniform("h"), "no h")
+                .set(textureProvider.height);
         
         if (shader.MODEL_VIEW_MATRIX != null) {
             shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);
@@ -179,6 +188,8 @@ public class MyRenderHelper {
         
         
         shader.clear();
+
+        RenderSystem.clearShader();
     }
     
     public static void renderScreenTriangle() {

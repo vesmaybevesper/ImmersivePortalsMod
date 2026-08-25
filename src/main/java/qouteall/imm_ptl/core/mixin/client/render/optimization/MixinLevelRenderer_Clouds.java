@@ -1,6 +1,7 @@
 package qouteall.imm_ptl.core.mixin.client.render.optimization;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.CloudStatus;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.util.Mth;
@@ -101,7 +102,7 @@ public abstract class MixinLevelRenderer_Clouds {
     }
     
     /**
-     * {@link LevelRenderer#renderClouds}
+     * {@link net.minecraft.client.renderer.CloudRenderer#render(int, CloudStatus, float, Vec3, long, float)}
      */
     @IPVanillaCopy
     private void portal_onBeginCloudRendering(

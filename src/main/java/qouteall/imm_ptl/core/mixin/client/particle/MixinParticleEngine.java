@@ -8,6 +8,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.state.ParticlesRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,12 +27,12 @@ public class MixinParticleEngine implements IEParticleManager {
     
     // skip particle rendering for far portals
     @Inject(
-        method = "render",
+        method = "extract",
         at = @At("HEAD"),
         cancellable = true
     )
     private void onBeginRenderParticles(
-        LightTexture lightTexture, Camera camera, float f, CallbackInfo ci
+            ParticlesRenderState particlesRenderState, Frustum frustum, Camera camera, float f, CallbackInfo ci
     ) {
         if (PortalRendering.isRendering()) {
             if (RenderStates.getRenderedPortalNum() > 4) {
@@ -41,7 +43,7 @@ public class MixinParticleEngine implements IEParticleManager {
     
     // maybe incompatible with sodium and iris
     @WrapWithCondition(
-        method = "render",
+        method = "extract",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/particle/Particle;render(Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/Camera;F)V"

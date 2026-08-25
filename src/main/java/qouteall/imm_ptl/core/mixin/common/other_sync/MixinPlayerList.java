@@ -126,7 +126,7 @@ public class MixinPlayerList {
                 )) {
                     rec.player.connection.send(
                         PacketRedirection.createRedirectedMessage(
-                            rec.player.getServer(),
+                            rec.player.level().getServer(),
                             dimension, (Packet<ClientGamePacketListener>) packet
                         )
                     );

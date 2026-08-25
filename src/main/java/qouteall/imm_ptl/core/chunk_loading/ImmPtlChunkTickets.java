@@ -57,8 +57,8 @@ import java.util.concurrent.Executor;
 public class ImmPtlChunkTickets {
     private static final Logger LOGGER = LogUtils.getLogger();
     
-    public static final TicketType<ChunkPos> TICKET_TYPE =
-        TicketType.create("imm_ptl", Comparator.comparingLong(ChunkPos::toLong));
+    public static final TicketType TICKET_TYPE =
+        TicketType.register("imm_ptl", Comparator.comparingLong(ChunkPos::toLong), TicketType.FLAG_KEEP_DIMENSION_ACTIVE);
     
     // for debugging
     @SuppressWarnings("FieldMayBeFinal")
@@ -200,7 +200,7 @@ public class ImmPtlChunkTickets {
             
             if (!resultNow.isSuccess()) {
                 LOGGER.error(
-                    "Chunk loading failure {} {} {}",
+                    "Chunk loading failure {} {}",
                     world, new ChunkPos(chunkPos)
                 );
             }
@@ -295,15 +295,15 @@ public class ImmPtlChunkTickets {
         DistanceManager ticketManager = getDistanceManager(world);
         
         dimTicketManager.chunkPosToTicketInfo.keySet().forEach((long pos) -> {
-            SortedArraySet<Ticket<?>> tickets = ((IEDistanceManager) getDistanceManager(world))
+            SortedArraySet<Ticket> tickets = ((IEDistanceManager) getDistanceManager(world))
                 .portal_getTicketSet(pos);
             
             // avoid removing ticket when iterating the ticket set
-            List<Ticket<?>> toRemove = tickets.stream()
+            List<Ticket> toRemove = tickets.stream()
                 .filter(t -> t.getType() == TICKET_TYPE).toList();
             
             ChunkPos chunkPos = new ChunkPos(pos);
-            for (Ticket<?> ticket : toRemove) {
+            for (Ticket ticket : toRemove) {
                 ticketManager.removeRegionTicket(TICKET_TYPE, chunkPos, ticket.getTicketLevel(), chunkPos);
             }
         });

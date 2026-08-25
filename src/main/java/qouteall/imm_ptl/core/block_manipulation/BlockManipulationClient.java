@@ -65,7 +65,7 @@ public class BlockManipulationClient {
             return;
         }
         
-        Vec3 cameraPos = client.gameRenderer.getMainCamera().getPosition();
+        Vec3 cameraPos = client.gameRenderer.getMainCamera().position();
         
         double reachDistance = client.player.blockInteractionRange();
         
@@ -89,7 +89,7 @@ public class BlockManipulationClient {
     }
     
     private static double getCurrentTargetDistance() {
-        Vec3 cameraPos = client.gameRenderer.getMainCamera().getPosition();
+        Vec3 cameraPos = client.gameRenderer.getMainCamera().position();
         
         if (hitResultIsMissedOrNull(client.hitResult)) {
             return 23333;
@@ -173,7 +173,7 @@ public class BlockManipulationClient {
             }
         );
         
-        if (remoteHitResult.getLocation().y < world.getMinBuildHeight() + 0.1) {
+        if (remoteHitResult.getLocation().y < world.getMinY() + 0.1) {
             remoteHitResult = new BlockHitResult(
                 remoteHitResult.getLocation(),
                 Direction.DOWN,
@@ -237,7 +237,7 @@ public class BlockManipulationClient {
         }
         if (remoteHitResult instanceof BlockHitResult blockHitResult) {
             return "Point:%s %d %d %d".formatted(
-                remotePointedDim.location(),
+                remotePointedDim.identifier(),
                 blockHitResult.getBlockPos().getX(),
                 blockHitResult.getBlockPos().getY(),
                 blockHitResult.getBlockPos().getZ()

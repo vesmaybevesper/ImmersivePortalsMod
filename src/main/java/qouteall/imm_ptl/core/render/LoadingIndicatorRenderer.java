@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import qouteall.imm_ptl.core.portal.LoadingIndicatorEntity;
 
 public class LoadingIndicatorRenderer extends EntityRenderer<LoadingIndicatorEntity> {
@@ -11,7 +12,12 @@ public class LoadingIndicatorRenderer extends EntityRenderer<LoadingIndicatorEnt
         super(context);
     }
 
-    
+    @Override
+    public EntityRenderState createRenderState() {
+        return null;
+    }
+
+
     //@Override
     public void render(
         LoadingIndicatorEntity entity_1,

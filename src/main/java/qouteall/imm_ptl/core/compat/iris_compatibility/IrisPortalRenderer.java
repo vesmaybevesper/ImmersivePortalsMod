@@ -198,13 +198,7 @@ public class IrisPortalRenderer extends PortalRenderer {
     public void onBeforeTranslucentRendering(Matrix4f modelView) {
     
     }
-    
-    @Override
-    public void onAfterTranslucentRendering(Matrix4f modelView) {
-    
-    }
-    
-    
+
     @Override
     public void finishRendering() {
     
@@ -298,7 +292,7 @@ public class IrisPortalRenderer extends PortalRenderer {
             ViewAreaRenderer.renderPortalArea(
                 portal, Vec3.ZERO,
                 modelView,
-                RenderSystem.getProjectionMatrix(),
+                RenderSystem.getProjectionMatrixBuffer(),
                 true, true, true, true
             );
         });

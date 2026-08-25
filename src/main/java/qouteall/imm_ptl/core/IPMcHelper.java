@@ -1,6 +1,7 @@
 package qouteall.imm_ptl.core;
 
-import com.mojang.blaze3d.platform.GlUtil;
+import com.mojang.blaze3d.systems.GpuDevice;
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -11,6 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
@@ -25,6 +27,8 @@ import qouteall.imm_ptl.core.render.CrossPortalEntityRenderer;
 import qouteall.q_misc_util.my_util.LimitedLogger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -177,7 +181,7 @@ public class IPMcHelper {
      * @return Whatever {@code func} returned.
      */
     public static <T> T withSwitchedContext(Level world, Supplier<T> func) {
-        if (world.isClientSide) {
+        if (world.isClientSide()) {
             return ClientWorldLoader.withSwitchedWorld((ClientLevel) world, func);
         }
         else {
@@ -187,7 +191,7 @@ public class IPMcHelper {
     
     /**
      * @author LoganDark
-     * @see IPMcHelper#rayTrace(World, RaycastContext, boolean, List)
+     * @see IPMcHelper#rayTrace(Level, ClipContext, boolean, List)
      */
     private static Tuple<BlockHitResult, List<Portal>> rayTrace(
         Level world,
@@ -205,7 +209,7 @@ public class IPMcHelper {
             return new Tuple<>(
                 BlockHitResult.miss(
                     end,
-                    Direction.getNearest(diff.x, diff.y, diff.z),
+                        Arrays.stream(Direction.values()).max(Comparator.comparingDouble(d -> d.getUnitVec3().dot(diff))).orElseThrow(),
                     BlockPos.containing(end)
                 ),
                 portals
@@ -289,11 +293,7 @@ public class IPMcHelper {
         String command
     ) {
         return component.withStyle(
-            style -> style.withClickEvent(new ClickEvent(
-                ClickEvent.Action.RUN_COMMAND,
-                command
-            )).withUnderlined(true)
-        );
+            style -> Style.EMPTY.withClickEvent(new ClickEvent.RunCommand(command)).withUnderlined(true));
     }
     
     public static Component getDisableWarningText(String warningKey) {
@@ -312,7 +312,7 @@ public class IPMcHelper {
     
     @Environment(EnvType.CLIENT)
     public static boolean isNvidiaVideocard() {
-        return GlUtil.getVendor().toLowerCase().contains("nvidia");
+        return RenderSystem.getDevice().getVendor().toLowerCase().contains("nvidia");
     }
     
     public static FriendlyByteBuf bytesToBuf(byte[] packetBytes) {

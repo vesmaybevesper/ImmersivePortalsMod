@@ -17,9 +17,6 @@ transitive-accessible method com/mojang/blaze3d/shaders/Program$Type getGlType (
 
 transitive-extendable method net/minecraft/world/entity/Entity getBoundingBox ()Lnet/minecraft/world/phys/AABB;
 
-#transitive-accessible class net/minecraft/client/renderer/LevelRenderer$RenderChunkInfo
-
-#transitive-accessible method net/minecraft/client/renderer/LevelRenderer$RenderChunkInfo <init> (Lnet/minecraft/client/renderer/chunk/ChunkRenderDispatcher$RenderChunk;Lnet/minecraft/core/Direction;I)V
 
 transitive-accessible class net/minecraft/client/renderer/chunk/SectionRenderDispatcher$RenderSection$CompileTask
 
@@ -40,3 +37,5 @@ transitive-accessible field net/minecraft/client/multiplayer/ClientChunkCache le
 transitive-accessible class net/minecraft/util/datafix/fixes/ItemStackComponentizationFix$ItemStackData
 
 accessible field net/minecraft/server/level/ServerPlayer server Lnet/minecraft/server/MinecraftServer;
+
+accessible method net/minecraft/server/level/TicketType register (Ljava/lang/String;JI)Lnet/minecraft/server/level/TicketType;

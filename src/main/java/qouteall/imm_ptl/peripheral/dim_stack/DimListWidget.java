@@ -5,7 +5,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import qouteall.q_misc_util.Helper;
 
 public class DimListWidget extends AbstractSelectionList<DimEntryWidget> {
@@ -42,12 +44,12 @@ public class DimListWidget extends AbstractSelectionList<DimEntryWidget> {
     }
     
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(@NonNull MouseButtonEvent mouseButtonEvent, double deltaX, double deltaY) {
         if (type == Type.mainDimensionList && draggingCallback != null) {
             DimEntryWidget selected = getSelected();
         
             if (selected != null) {
-                DimEntryWidget mouseOn = getEntryAtPosition(mouseX, mouseY);
+                DimEntryWidget mouseOn = getEntryAtPosition(mouseButtonEvent.x(), mouseButtonEvent.y());
                 if (mouseOn != null) {
                     if (mouseOn != selected) {
                         int selectedIndex = children().indexOf(selected);
@@ -63,7 +65,7 @@ public class DimListWidget extends AbstractSelectionList<DimEntryWidget> {
             }
         }
         
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(mouseButtonEvent, deltaX, deltaY);
     }
     
     @Override
@@ -75,11 +77,6 @@ public class DimListWidget extends AbstractSelectionList<DimEntryWidget> {
     @Override
     public int getRowWidth() {
         return ROW_WIDTH;
-    }
-    
-    @Override
-    protected int getScrollbarPosition() {
-        return (width - ROW_WIDTH) / 2 + ROW_WIDTH;
     }
     
     @Override

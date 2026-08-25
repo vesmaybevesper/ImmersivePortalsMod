@@ -72,7 +72,7 @@ public class IrisCompatibilityPortalRenderer extends PortalRenderer {
         deferredBuffer.prepare();
         
         deferredBuffer.fb.setClearColor(1, 0, 0, 0);
-        deferredBuffer.fb.clear(Minecraft.ON_OSX);
+        deferredBuffer.fb.clear();
         
         IPPortingLibCompat.setIsStencilEnabled(
             client.getMainRenderTarget(), false
@@ -109,7 +109,7 @@ public class IrisCompatibilityPortalRenderer extends PortalRenderer {
                 portal,
                 client.getMainRenderTarget(),
                 modelView,
-                RenderSystem.getProjectionMatrix()
+                RenderSystem.getProjectionMatrixBuffer()
             );
         }
         else {
@@ -154,7 +154,7 @@ public class IrisCompatibilityPortalRenderer extends PortalRenderer {
             ViewAreaRenderer.renderPortalArea(
                 portal, Vec3.ZERO,
                 modelView,
-                RenderSystem.getProjectionMatrix(),
+                RenderSystem.getProjectionMatrixBuffer(),
                 true, false, false, true
             );
         });

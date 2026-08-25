@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -150,7 +151,7 @@ public class DimStackManagement {
                             chunk.setBlockState(
                                 mutable,
                                 replacement,
-                                false
+                                0 // i am assuming the flag is 0 for no, 1 for yes but i gotta boudle check
                             );
                         }
                     }
@@ -219,7 +220,7 @@ public class DimStackManagement {
         public static void serverSetupDimStack(
             ServerPlayer player, DimStackInfo dimStackInfo
         ) {
-            if (!player.hasPermissions(2)) {
+            if (!player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                 player.sendSystemMessage(Component.literal(
                     "You don't have permission to change dimension stack"
                 ));
@@ -233,7 +234,7 @@ public class DimStackManagement {
                 return;
             }
             
-            MinecraftServer server = player.getServer();
+            MinecraftServer server = player.level().getServer();
             
             updateDimStack(server, dimStackInfo);
             
@@ -246,12 +247,12 @@ public class DimStackManagement {
         public static void serverRemoveDimStack(
             ServerPlayer player
         ) {
-            if (!player.hasPermissions(2)) {
+            if (!player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                 Helper.err("one player without permission tries to change dimension stack");
                 return;
             }
             
-            MinecraftServer server = player.getServer();
+            MinecraftServer server = player.level().getServer();
             
             clearDimStackPortals(server);
             

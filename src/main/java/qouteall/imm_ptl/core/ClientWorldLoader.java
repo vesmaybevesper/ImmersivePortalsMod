@@ -21,6 +21,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.compress.archivers.sevenz.CLI;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -118,7 +119,7 @@ public class ClientWorldLoader {
             });
             WORLD_RENDERER_MAP.values().forEach(worldRenderer -> {
                 if (worldRenderer != CLIENT.levelRenderer) {
-                    worldRenderer.tick();
+                    worldRenderer.tick(CLIENT.gameRenderer.getMainCamera());
                 }
             });
             isClientRemoteTicking = false;
@@ -405,7 +406,9 @@ public class ClientWorldLoader {
             CLIENT,
             CLIENT.getEntityRenderDispatcher(),
             CLIENT.getBlockEntityRenderDispatcher(),
-            CLIENT.renderBuffers()
+            CLIENT.renderBuffers(),
+            CLIENT.gameRenderer.getLevelRenderState(),
+            CLIENT.gameRenderer.getFeatureRenderDispatcher()
         );
         
         ClientLevel newWorld;

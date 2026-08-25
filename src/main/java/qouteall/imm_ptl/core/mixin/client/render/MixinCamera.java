@@ -4,6 +4,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,16 +36,12 @@ public abstract class MixinCamera implements IECamera {
     @Shadow
     protected abstract void setPosition(Vec3 vec3d_1);
     
-    @Shadow
-    public abstract Entity getEntity();
-    
     @Inject(
-        method = "Lnet/minecraft/client/Camera;setup(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V",
+        method = "setup",
         at = @At("RETURN")
     )
     private void onUpdateFinished(
-        BlockGetter area, Entity focusedEntity, boolean thirdPerson,
-        boolean inverseView, float partialTick, CallbackInfo ci
+            Level level, Entity entity, boolean bl, boolean bl2, float f, CallbackInfo ci
     ) {
         Camera this_ = (Camera) (Object) this;
         WorldRenderInfo.adjustCameraPos(this_);

@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL30C;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
@@ -25,7 +26,8 @@ import static org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
 
 @Mixin(RenderTarget.class)
 public abstract class MixinRenderTarget implements IEFrameBuffer {
-    
+
+    @Unique
     private boolean isStencilBufferEnabled;
     
     @Shadow
@@ -35,12 +37,11 @@ public abstract class MixinRenderTarget implements IEFrameBuffer {
     
     
     @Shadow
-    public abstract void resize(int width, int height, boolean clearError);
+    public abstract void resize(int width, int height);
     
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(
-        boolean useDepth,
-        CallbackInfo ci
+            String string, boolean bl, CallbackInfo ci
     ) {
         isStencilBufferEnabled = false;
     }
@@ -153,7 +154,7 @@ public abstract class MixinRenderTarget implements IEFrameBuffer {
     public void ip_setIsStencilBufferEnabledAndReload(boolean cond) {
         if (isStencilBufferEnabled != cond) {
             isStencilBufferEnabled = cond;
-            resize(width, height, Minecraft.ON_OSX);
+            resize(width, height);
         }
     }
 }

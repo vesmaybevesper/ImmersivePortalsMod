@@ -7,6 +7,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.NonNull;
 import qouteall.imm_ptl.core.CHelper;
 import qouteall.imm_ptl.core.ClientWorldLoader;
 import qouteall.imm_ptl.core.api.PortalAPI;
@@ -109,7 +111,8 @@ public class ExampleGuiPortalRendering {
             if (frameBuffer == null) {
                 // the framebuffer size doesn't matter here
                 // because it will be automatically resized when rendering
-                frameBuffer = new TextureTarget(2, 2, true, true);
+                // String doesn't matter, it's just the name, will just be added to the collection of un-named if none is present
+                frameBuffer = new TextureTarget(null, 2, 2, true);
             }
             
             Minecraft.getInstance().setScreen(new GuiPortalScreen(dimension, position));
@@ -205,12 +208,13 @@ public class ExampleGuiPortalRendering {
         
         // close when E is pressed
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (super.keyPressed(keyCode, scanCode, modifiers)) {
+        public boolean keyPressed(@NonNull KeyEvent keyEvent) {
+            if (super.keyPressed(keyEvent)) {
                 return true;
             }
-            
-            if (minecraft.options.keyInventory.matches(keyCode, scanCode)) {
+
+            // from my frantic googling this is the E key but that could be wrong If you are reading this for an example and this comment is still here i probably worked and i forgot to delete
+            if (keyEvent.key() == 69) {
                 this.onClose();
                 return true;
             }

@@ -32,9 +32,9 @@ public class NormalAnimation implements PortalAnimationDriver {
         TimingFunction timingFunction
     ) {
         public static Phase fromTag(CompoundTag tag) {
-            long durationTicks = tag.getLong("durationTicks");
-            DeltaUnilateralPortalState delta = DeltaUnilateralPortalState.fromTag(tag.getCompound("delta"));
-            TimingFunction timingFunction = TimingFunction.fromString(tag.getString("timingFunction"));
+            long durationTicks = tag.getLong("durationTicks").orElseThrow();
+            DeltaUnilateralPortalState delta = DeltaUnilateralPortalState.fromTag(tag.getCompound("delta").orElseThrow());
+            TimingFunction timingFunction = TimingFunction.fromString(tag.getString("timingFunction").orElseThrow());
             return new Phase(durationTicks, delta, timingFunction);
         }
         
@@ -113,18 +113,18 @@ public class NormalAnimation implements PortalAnimationDriver {
     }
     
     private static NormalAnimation deserialize(CompoundTag compoundTag) {
-        UnilateralPortalState initialState = UnilateralPortalState.fromTag(compoundTag.getCompound("initialState"));
+        UnilateralPortalState initialState = UnilateralPortalState.fromTag(compoundTag.getCompound("initialState").orElseThrow());
         
         List<Phase> phases = Helper.listTagToList(
             Helper.getCompoundList(compoundTag, "phases"),
             Phase::fromTag
         );
         
-        long startingGameTime = compoundTag.getLong("startingGameTime");
+        long startingGameTime = compoundTag.getLong("startingGameTime").orElseThrow();
         
-        int loopCount = compoundTag.getInt("loopCount");
+        int loopCount = compoundTag.getInt("loopCount").orElseThrow();
         
-        boolean isBuilding = compoundTag.getBoolean("isBuilding");
+        boolean isBuilding = compoundTag.getBoolean("isBuilding").orElseThrow();
         
         if (!isBuilding) {
             if (phases.isEmpty() || loopCount < 0) {

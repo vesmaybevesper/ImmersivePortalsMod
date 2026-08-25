@@ -11,23 +11,23 @@ public class SecondaryFrameBuffer {
     
     public void prepare() {
         RenderTarget mainFrameBuffer = Minecraft.getInstance().getMainRenderTarget();
-        int width = mainFrameBuffer.viewWidth;
-        int height = mainFrameBuffer.viewHeight;
+        int width = mainFrameBuffer.width;
+        int height = mainFrameBuffer.height;
         prepare(width, height);
     }
     
     public void prepare(int width, int height) {
         if (fb == null) {
             fb = new TextureTarget(
-                width, height,
-                true,//has depth attachment
-                Minecraft.ON_OSX
+                    null,
+                    width, height,
+                    true //has depth attachment
             );
             fb.checkStatus();
             Helper.log("Secondary Framebuffer init");
         }
-        if (width != fb.viewWidth ||
-            height != fb.viewHeight
+        if (width != fb.width ||
+            height != fb.height
         ) {
             fb.resize(
                 width, height

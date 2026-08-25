@@ -4,9 +4,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
@@ -20,6 +19,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.NonNull;
 import qouteall.imm_ptl.core.McHelper;
 import qouteall.imm_ptl.core.portal.nether_portal.BreakablePortalEntity;
 
@@ -88,50 +88,21 @@ public class PortalPlaceholderBlock extends Block {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AXIS);
     }
-    
+
     @Override
-    public BlockState updateShape(
-        BlockState thisState,
-        Direction direction,
-        BlockState neighborState,
-        LevelAccessor worldAccess,
-        BlockPos blockPos,
-        BlockPos neighborPos
-    ) {
-        if (!worldAccess.isClientSide()) {
-            if (worldAccess instanceof Level) {
-                Level world = (Level) worldAccess;
-                
-                world.getProfiler().push("portal_placeholder");
-                
-                Direction.Axis axis = thisState.getValue(AXIS);
-                if (direction.getAxis() != axis) {
-                    McHelper.findEntitiesRough(
-                        BreakablePortalEntity.class,
-                        world,
-                        Vec3.atLowerCornerOf(blockPos),
-                        2,
-                        e -> true
-                    ).forEach(
-                        portal -> {
-                            ((BreakablePortalEntity) portal).notifyPlaceholderUpdate();
-                        }
-                    );
-                }
-                
-                world.getProfiler().pop();
-            }
-        }
-        
-        return super.updateShape(
-            thisState,
-            direction,
-            neighborState,
-            worldAccess,
-            blockPos,
-            neighborPos
-        );
+    protected @NonNull BlockState updateShape(BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos, Direction direction, BlockPos blockPos2, BlockState blockState2, RandomSource randomSource) {
+       if (!levelReader.isClientSide()){
+           if (levelReader instanceof Level level){
+               Direction.Axis axis = blockState.getValue(AXIS);
+
+               if (direction.getAxis() != axis){
+                   McHelper.findEntitiesRough(BreakablePortalEntity.class, level, Vec3.atLowerCornerOf(blockPos), 2, e -> true).forEach(BreakablePortalEntity::notifyPlaceholderUpdate);
+               }
+           }
+       }
+       return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
     }
+
     
     public static boolean isHitOnPlaceholder(HitResult hitResult, Level world) {
         if (hitResult.getType() == HitResult.Type.BLOCK) {
@@ -146,15 +117,13 @@ public class PortalPlaceholderBlock extends Block {
     //---------These are copied from BlockBarrier
     @Override
     public boolean propagatesSkylightDown(
-        BlockState blockState_1,
-        BlockGetter blockView_1,
-        BlockPos blockPos_1
+        BlockState blockState
     ) {
         return true;
     }
     
     @Override
-    public RenderShape getRenderShape(BlockState blockState_1) {
+    public @NonNull RenderShape getRenderShape(@NonNull BlockState blockState_1) {
         return RenderShape.INVISIBLE;
     }
     
