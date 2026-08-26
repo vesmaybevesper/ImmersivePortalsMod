@@ -1,2 +1,2 @@
 - Fix Cardinal Components API compat
-- Temp disable update checker
+- Temp disable update checker until I can re-route it to check my fork's version
