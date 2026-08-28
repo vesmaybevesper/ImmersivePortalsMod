@@ -1,0 +1,162 @@
+{
+  "latestReleaseVersion": "1.0.0-beta.3",
+  "previewVersions": ["1.0.0-beta.3"],
+  "severelyIncompatible": [
+    {
+      "modId": "mcxr-core",
+      "modName": "MCXR",
+      "desc": "Portal cannot be rendered in VR.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/845"
+    },
+    { "modId": "taterzens", "modName": "Taterzens"},
+    { "modId": "altoclef", "modName": "Altoclef"},
+    { "modId": "vs_eureka", "modName": "Eureka Airships" },
+    { "modId": "backslot", "modName": "BaskSlot" },
+    {
+      "modId": "multiworld", "modName": "MultiWorld",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1293"
+    },
+    { "modId": "baritone", "modName": "Baritone" },
+    {
+      "modId": "bettertrims",
+      "modName": "bettertrims",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1413"
+    },
+    {
+      "modId": "betterclouds",
+      "modName": "betterclouds",
+      "desc":"Portal rendering will not work normally",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1469"
+    },
+    {
+      "modId": "worldthreader",
+      "modName": "Dimensional Threading (World Threader)",
+      "desc":"",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1472"
+    },
+    {
+      "modId": "bobby",
+      "modName": "Bobby",
+      "desc":"",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/953"
+    },
+    {
+      "modId": "voxy",
+      "modName": "Voxy",
+      "desc":"",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1524"
+    },
+    {
+      "modId": "vivecraft",
+      "modName": "Vivecraft",
+      "desc": "Protal rendering and teleportation may be abnormal.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1427"
+    }
+  ],
+  "incompatible": [
+    {
+      "modId": "physicsmod",
+      "modName": "Physics Mod",
+      "desc": "Some physics effect will be abnormal.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/985"
+    },
+    {
+      "modId": "cameraoverhaul", "modName": "Camera Overhaul", "desc": "Portal may get rendered abnormally.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/587"
+    },
+    { "modId": "requiem", "modName": "Requiem"},
+    {
+      "modId": "modern_industrialization",
+      "modName": "Modern Industrialization",
+      "desc": "Translucent things may not be occluded when rendering a portal."
+    },
+    { "modId": "create", "modName": "Create", "desc": "Sometimes some contraptions will be invisible." },
+    {
+      "modId": "twilightforest",
+      "modName": "Twilight Forest",
+      "desc": "The Twilight Forest map sometimes doesn't work."
+    },
+    { "modId": "vmp", "modName": "VMP", "link": "https://github.com/RelativityMC/VMP-fabric/issues/2" },
+    { "modId": "lod", "modName": "Distant Horizons" },
+    {
+      "modId": "entityculling",
+      "modName": "Entity Culling",
+      "desc": "Entities may be invisible when looking at a portal."
+    },
+    { "modId": "victus", "modName": "Victus", "desc": "Makes portal invisible when using shaders" },
+    {
+      "modId": "shouldersurfing",
+      "modName": "Shoulder Surfing",
+      "desc": "When in the 3rd person shoulder surfing view the portal doesnt render properly",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1412"
+    },
+    {
+      "modId": "voicechat",
+      "modName": "Simple Voice Chat",
+      "desc": "Voice may stutter when looking at portal? (Not yet confirmed.)"
+    },
+    {
+      "modId": "rootsclassic",
+      "modName": "RootsClassic",
+      "desc": "The performance may drop.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1448"
+    },
+    {
+      "modId": "conjuring",
+      "modName": "Conjuring",
+      "desc": "Portal rendering with Iris shader may not work.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1450"
+    },
+    {
+      "modId": "things",
+      "modName": "Things",
+      "desc": "Portal rendering with Iris shader may not work.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1450"
+    },
+    {
+      "modId": "nvidium",
+      "modName": "Nvidium",
+      "desc": "Portal rendering will not work normally. Game may crash when changing nvidium option.",
+      "link":"https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1359"
+    },
+    {
+      "modId": "c2me",
+      "modName": "C2ME",
+      "desc": "Chunk loading and portal creation may not work normally.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1036"
+    },
+    {
+      "modId": "fabrictailor",
+      "modName": "Fabric Tailor",
+      "desc": "The game will malfunction when skin changes.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1476"
+    },
+    {
+      "modId": "betternether",
+      "modName": "Better Nether",
+      "desc": "The fog rendering in nether portal may be abnormal.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1493"
+    },
+    {
+      "modId": "nostalgic_tweaks",
+      "modName": "Nostalgic Tweaks",
+      "desc": "Lighting abnormal when old light rendering is enabled.",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1505"
+    },
+    {
+      "modId": "visualoverhaul",
+      "modName": "Visual Overhaul",
+      "desc": "",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1547"
+    },
+    {
+      "modId": "collective",
+      "modName": "Collective",
+      "link": "https://github.com/iPortalTeam/ImmersivePortalsMod/issues/1222",
+      "desc":"Entity may be invisible when looking at portal"
+    }
+  ],
+  "incompatibleShaderpacks": [
+    "sildur", "arc", "ptgi", "complementary"
+  ]
+}
