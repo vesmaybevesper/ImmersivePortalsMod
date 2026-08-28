@@ -1,5 +1,6 @@
 package qouteall.imm_ptl.core.render;
 
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.opengl.GlProgram;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -23,7 +24,7 @@ public class ViewAreaRenderer {
     
     public static void renderPortalArea(
         Portal portal, Vec3 fogColor,
-        Matrix4f modelViewMatrix, Matrix4f projectionMatrix,
+        Matrix4f modelViewMatrix, GpuBufferSlice bufferSlice,
         boolean doFaceCulling, boolean doModifyColor,
         boolean doModifyDepth, boolean doClip
     ) {
@@ -84,7 +85,7 @@ public class ViewAreaRenderer {
         RenderSystem.setShader(() -> shader);
         
         shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);
-        shader.PROJECTION_MATRIX.set(projectionMatrix);
+        shader.PROJECTION_MATRIX.set(bufferSlice);
         
         FrontClipping.updateClippingEquationUniformForCurrentShader(false);
         

@@ -23,12 +23,13 @@ public abstract class MixinMainTarget extends RenderTarget {
         super("Main", true);
         throw new RuntimeException();
     }
-    
+
+    // Blindly updated the target here, its really the only place it could go in the method though. lets hope it doesnt break lmfao
     @ModifyArgs(
         method = "allocateDepthAttachment",
         at = @At(
             value = "INVOKE",
-            target = "Lcom/mojang/blaze3d/platform/GlStateManager;_texImage2D(IIIIIIIILjava/nio/IntBuffer;)V",
+            target = "Lcom/mojang/blaze3d/systems/GpuDevice;createTexture(Ljava/util/function/Supplier;ILcom/mojang/blaze3d/textures/TextureFormat;IIII)Lcom/mojang/blaze3d/textures/GpuTexture;",
             remap = false
         )
     )

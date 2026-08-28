@@ -2,6 +2,7 @@ package qouteall.imm_ptl.core.mixin.client.render.shader;
 
 import com.mojang.blaze3d.opengl.GlShaderModule;
 import com.mojang.blaze3d.preprocessor.GlslPreprocessor;
+import com.mojang.blaze3d.shaders.ShaderType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,7 +21,7 @@ import java.util.Objects;
 public class MixinProgram {
     // The redirect uses method arguments.
     // Iris also injects that method and uses local capture, so cannot overwrite.
-    private static final ThreadLocal<Program.Type> ip_programType = new ThreadLocal<>();
+    private static final ThreadLocal<ShaderType> ip_programType = new ThreadLocal<>();
     private static final ThreadLocal<String> ip_programName = new ThreadLocal<>();
     
     @Inject(
@@ -28,7 +29,7 @@ public class MixinProgram {
         at = @At("HEAD")
     )
     private static void onBeginCompileShaderInternal(
-        Program.Type type, String name, InputStream shaderData,
+            ShaderType type, String name, InputStream shaderData,
         String sourceName, GlslPreprocessor preprocessor, CallbackInfoReturnable<Integer> cir
     ) {
         Validate.isTrue(ip_programType.get() == null);
@@ -42,7 +43,7 @@ public class MixinProgram {
         at = @At("RETURN")
     )
     private static void onEndCompileShaderInternal(
-        Program.Type type, String name, InputStream shaderData,
+            ShaderType type, String name, InputStream shaderData,
         String sourceName, GlslPreprocessor preprocessor, CallbackInfoReturnable<Integer> cir
     ) {
         Validate.isTrue(ip_programType.get() == type);
@@ -63,7 +64,7 @@ public class MixinProgram {
         InputStream inputStream, Charset charset
     ) throws IOException {
         String shaderCode = IOUtils.toString(inputStream, charset);
-        Program.Type type = ip_programType.get();
+        ShaderType type = ip_programType.get();
         String name = ip_programName.get();
         Validate.notNull(type);
         Validate.notNull(name);

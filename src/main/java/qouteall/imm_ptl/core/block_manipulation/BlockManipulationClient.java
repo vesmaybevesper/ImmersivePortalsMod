@@ -23,6 +23,8 @@ import qouteall.imm_ptl.core.portal.Portal;
 import qouteall.imm_ptl.core.portal.PortalPlaceholderBlock;
 import qouteall.imm_ptl.core.portal.PortalUtils;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.function.Supplier;
 
 public class BlockManipulationClient {
@@ -45,8 +47,8 @@ public class BlockManipulationClient {
     
     private static BlockHitResult createMissedHitResult(Vec3 from, Vec3 to) {
         Vec3 dir = to.subtract(from).normalize();
-        
-        return BlockHitResult.miss(to, Direction.getNearest(dir.x, dir.y, dir.z), BlockPos.containing(to));
+
+        return BlockHitResult.miss(to, Arrays.stream(Direction.values()).max(Comparator.comparingDouble(d -> d.getUnitVec3().dot(dir))).orElseThrow(), BlockPos.containing(to));
     }
     
     private static boolean hitResultIsMissedOrNull(HitResult bhr) {
@@ -167,7 +169,7 @@ public class BlockManipulationClient {
                 Vec3 vec3d = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());
                 return BlockHitResult.miss(
                     rayTraceContext.getTo(),
-                    Direction.getNearest(vec3d.x, vec3d.y, vec3d.z),
+                    Arrays.stream(Direction.values()).max(Comparator.comparingDouble(d -> d.getUnitVec3().dot(vec3d))).orElseThrow(),
                     BlockPos.containing(rayTraceContext.getTo())
                 );
             }

@@ -21,6 +21,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
@@ -538,7 +539,7 @@ public class Portal extends Entity implements PortalLike, IPEntityEventListenabl
     
     public void reloadAndSyncToClientWithTickDelay(int tickDelay) {
         Validate.isTrue(!level().isClientSide(), "must be used on server side");
-        ServerTaskList.of(getServer()).addTask(MyTaskList.withDelay(tickDelay, () -> {
+        ServerTaskList.of(level().getServer()).addTask(MyTaskList.withDelay(tickDelay, () -> {
             reloadAndSyncToClientNextTick();
             return true;
         }));
@@ -911,7 +912,7 @@ public class Portal extends Entity implements PortalLike, IPEntityEventListenabl
         return (Packet<ClientGamePacketListener>) (Packet)
             ServerPlayNetworking.createS2CPacket(new ImmPtlNetworking.PortalSyncPacket(
                 getId(), getUUID(), getType(),
-                PortalAPI.serverDimKeyToInt(getServer(), getOriginDim()),
+                PortalAPI.serverDimKeyToInt(level().getServer(), getOriginDim()),
                 getX(), getY(), getZ(),
                 compoundTag
             ));
@@ -982,7 +983,12 @@ public class Portal extends Entity implements PortalLike, IPEntityEventListenabl
     public void move(MoverType type, Vec3 movement) {
         //portal cannot be moved
     }
-    
+
+    @Override
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damageSource, float f) {
+        return false;
+    }
+
     /**
      * Invalid portals will be automatically removed
      */
@@ -1307,7 +1313,7 @@ public class Portal extends Entity implements PortalLike, IPEntityEventListenabl
             return CHelper.getClientWorld(dimensionTo);
         }
         else {
-            MinecraftServer server = getServer();
+            MinecraftServer server = level().getServer();
             assert server != null;
             return server.getLevel(dimensionTo);
         }
@@ -1652,7 +1658,7 @@ public class Portal extends Entity implements PortalLike, IPEntityEventListenabl
     }
     
     public Direction getTransformedGravityDirection(Direction oldGravityDir) {
-        Vec3 oldGravityVec = Vec3.atLowerCornerOf(oldGravityDir.getNormal());
+        Vec3 oldGravityVec = Vec3.atLowerCornerOf(oldGravityDir.getUnitVec3i());
         
         Vec3 newGravityVec = transformLocalVecNonScale(oldGravityVec);
         

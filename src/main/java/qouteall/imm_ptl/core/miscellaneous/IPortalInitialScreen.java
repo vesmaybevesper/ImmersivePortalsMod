@@ -1,6 +1,5 @@
 package qouteall.imm_ptl.core.miscellaneous;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageWidget;
 import net.minecraft.client.gui.components.MultiLineTextWidget;
@@ -32,9 +31,6 @@ public class IPortalInitialScreen extends Screen {
         super(Component.empty());
         this.onClose = onClose;
         
-        this.minecraft = Minecraft.getInstance();
-        this.font = minecraft.font;
-        
         prevButton = Button.builder(
             Component.translatable("iportal.initial_screen.prev"),
             button -> onPrevious()
@@ -59,7 +55,7 @@ public class IPortalInitialScreen extends Screen {
         titleWidget = new StringWidget(
             Component.translatable("iportal.initial_screen.title"),
             font
-        ).alignCenter();
+        );
         
         contentWidget = new MultiLineTextWidget(
             Component.empty(),
@@ -114,7 +110,6 @@ public class IPortalInitialScreen extends Screen {
         contentWidget.setMaxWidth(this.width - 40);
         pageNumberWidget.setWidth(50);
         pageNumberWidget.setHeight(iKnowButton.getHeight());
-        pageNumberWidget.alignCenter();
         titleWidget.setHeight(iconWidget.getHeight());
         
         addRenderableWidget(prevButton);

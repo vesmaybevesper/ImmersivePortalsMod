@@ -244,32 +244,34 @@ public class PortalDebugCommands {
                 return 0;
             })
         );
-        
+
+
+        // I had to move some parens to remove errors, maybe broken !
         builder.then(Commands
             .literal("erase_chunk")
-            .requires(serverCommandSource -> serverCommandSource.permissions().hasPermission(Permissions.COMMANDS_ADMIN)
+            .requires(serverCommandSource -> serverCommandSource.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
             .then(Commands.argument("rChunks", IntegerArgumentType.integer())
                 .executes(context -> {
                     ServerPlayer player = context.getSource().getPlayerOrException();
-                    
+
                     ChunkPos center = new ChunkPos(BlockPos.containing(player.position()));
-                    
+
                     invokeEraseChunk(
                         player.level(), center,
                         IntegerArgumentType.getInteger(context, "rChunks"),
                         McHelper.getMinY(player.level()), McHelper.getMaxYExclusive(player.level())
                     );
-                    
+
                     return 0;
                 })
                 .then(Commands.argument("downY", IntegerArgumentType.integer())
                     .then(Commands.argument("upY", IntegerArgumentType.integer())
                         .executes(context -> {
-                            
+
                             ServerPlayer player = context.getSource().getPlayerOrException();
-                            
+
                             ChunkPos center = new ChunkPos(BlockPos.containing(player.position()));
-                            
+
                             invokeEraseChunk(
                                 player.level(), center,
                                 IntegerArgumentType.getInteger(context, "rChunks"),
@@ -281,7 +283,7 @@ public class PortalDebugCommands {
                     )
                 )
             )
-        ));
+        );
         
         builder.then(Commands
             .literal("report_chunk_loaders")
@@ -579,7 +581,7 @@ public class PortalDebugCommands {
             .requires(serverCommandSource -> serverCommandSource.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
             .executes(context -> {
                 RegistryAccess.Frozen registryAccess = MiscHelper.getServer().registryAccess();
-                Registry<Biome> biomes = registryAccess.registryOrThrow(Registries.BIOME);
+                Registry<Biome> biomes = registryAccess.lookupOrThrow(Registries.BIOME);
                 Map<String, Integer> map = new HashMap<>();
                 for (Map.Entry<ResourceKey<Biome>, Biome> entry : biomes.entrySet()) {
                     String strId = entry.getKey().identifier().toString();

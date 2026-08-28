@@ -6,12 +6,13 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.QuadCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -23,10 +24,11 @@ import qouteall.imm_ptl.core.compat.sodium_compatibility.SodiumInterface;
 import qouteall.imm_ptl.core.portal.Portal;
 import qouteall.imm_ptl.core.portal.nether_portal.BlockPortalShape;
 import qouteall.imm_ptl.core.portal.nether_portal.BreakablePortalEntity;
-import qouteall.imm_ptl.core.render.context_management.PortalRendering;
 import qouteall.imm_ptl.core.render.context_management.RenderStates;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
@@ -69,18 +71,18 @@ public class OverlayRendering {
         }
     }
     
-    public static List<BakedQuad> getQuads(BakedModel model, BlockState blockState, Vec3 portalNormal) {
-        Direction facing = Direction.getNearest(portalNormal.x, portalNormal.y, portalNormal.z);
+        public static List<BakedQuad> getQuads(QuadCollection model, BlockState blockState, Vec3 portalNormal) {
+        Direction facing = Arrays.stream(Direction.values()).max(Comparator.comparingDouble(d -> d.getUnitVec3().dot(portalNormal))).orElseThrow();
         
         List<BakedQuad> result = new ArrayList<>();
         
-        result.addAll(model.getQuads(blockState, facing, random));
+        result.addAll(model.getQuads(facing));
         
-        result.addAll(model.getQuads(blockState, null, random));
+        result.addAll(model.getQuads(null));
         
         if (result.isEmpty()) {
             for (Direction direction : Direction.values()) {
-                result.addAll(model.getQuads(blockState, direction, random));
+                result.addAll(model.getQuads(direction));
             }
         }
         
@@ -129,7 +131,7 @@ public class OverlayRendering {
         
         matrixStack.translate(offset.x, offset.y, offset.z);
         
-        BakedModel model = blockRenderManager.getBlockModel(blockState);
+        BlockStateModel model = blockRenderManager.getBlockModel(blockState);
         RenderType renderLayer = Sheets.translucentCullBlockSheet();
         VertexConsumer buffer = vertexConsumerProvider.getBuffer(renderLayer);
         
@@ -148,15 +150,14 @@ public class OverlayRendering {
             }
             
             for (BakedQuad quad : quads) {
-                SodiumInterface.invoker.markSpriteActive(quad.getSprite());
+                SodiumInterface.invoker.markSpriteActive(quad.sprite());
                 buffer.putBulkData(
                     matrixStack.last(),
                     quad,
                     new float[]{1.0F, 1.0F, 1.0F, 1.0F},
                     1.0f, 1.0f, 1.0f, (float) overlay.opacity(),
                     new int[]{14680304, 14680304, 14680304, 14680304},//packed light value
-                    OverlayTexture.NO_OVERLAY,
-                    true
+                    OverlayTexture.NO_OVERLAY
                 );
             }
             

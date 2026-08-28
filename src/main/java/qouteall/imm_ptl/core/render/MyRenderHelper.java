@@ -1,8 +1,6 @@
 package qouteall.imm_ptl.core.render;
 
-import com.mojang.blaze3d.opengl.GlProgram;
 import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.opengl.Uniform;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,18 +9,14 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ShaderDefines;
 import net.minecraft.client.renderer.chunk.SectionRenderDispatcher;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceProvider;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.Validate;
 import org.joml.Matrix4f;
 import qouteall.imm_ptl.core.CHelper;
 import qouteall.imm_ptl.core.ClientWorldLoader;
-import qouteall.imm_ptl.core.McHelper;
 import qouteall.imm_ptl.core.miscellaneous.IPVanillaCopy;
 import qouteall.imm_ptl.core.mixin.client.accessor.RenderPipelinesAccessor;
 import qouteall.imm_ptl.core.portal.Portal;
@@ -34,12 +28,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.lwjgl.opengl.GL11.GL_BACK;
@@ -52,247 +44,244 @@ import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glReadPixels;
 
 public class MyRenderHelper {
-    
+
     public static final Minecraft client = Minecraft.getInstance();
 
-    public static final
+    public static final RenderPipeline BLIT_SCREEN_NOBLEND = RenderPipelinesAccessor.register(
+            "blit_screen_noblend",
+            DefaultVertexFormat.BLIT_SCREEN,
+            ShaderDefines.EMPTY
+    );
 
-    public static final RenderPipeline BLIT_SCREEN_NOBLEND = RenderPipelinesAccessor.register();
-    
-    /*public static final SignalBiArged<ResourceProvider, Consumer<ShaderInstance>> loadShaderSignal =
-        new SignalBiArged<>();*/
-    
+//    public static final SignalBiArged<ResourceProvider, Consumer<ShaderInstance>> loadShaderSignal =
+//        new SignalBiArged<>();
+
     public static void init() {
-    /*
-        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
-            try {
-                DrawFbInAreaShader shader = new DrawFbInAreaShader(
-                    getResourceFactory(resourceManager),
-                    "portal_draw_fb_in_area",
-                    DefaultVertexFormat.POSITION_COLOR
-                );
-                resultConsumer.accept(shader);
-                drawFbInAreaShader = shader;
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        
-        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
-            try {
-                ShaderInstance shader = new ShaderInstance(
-                    getResourceFactory(resourceManager),
-                    "portal_area",
-                    DefaultVertexFormat.POSITION_COLOR
-                );
-                resultConsumer.accept(shader);
-                portalAreaShader = shader;
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        
-        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
-            try {
-                ShaderInstance shader = new ShaderInstance(
-                    getResourceFactory(resourceManager),
-                    "blit_screen_noblend",
-                    DefaultVertexFormat.POSITION_TEX_COLOR
-                );
-                resultConsumer.accept(shader);
-                blitScreenNoBlendShader = shader;
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });*/
-    }
-    
-    // vanilla hardcodes the shader namespace to be "minecraft"
-    private static ResourceProvider getResourceFactory(ResourceProvider resourceManager) {
-        ResourceProvider resourceFactory = new ResourceProvider() {
-            @Override
-            public Optional<Resource> getResource(Identifier identifier) {
-                Identifier corrected = McHelper.newIdentifier(
-                    "immersive_portals", identifier.getPath());
-                return resourceManager.getResource(corrected);
-            }
-        };
-        return resourceFactory;
-    }
-    
-    public static class DrawFbInAreaShader extends ShaderInstance {
-        
-        public final Uniform uniformW;
-        public final Uniform uniformH;
-        
-        public DrawFbInAreaShader(
-            ResourceProvider factory, String name, VertexFormat format
-        ) throws IOException {
-            super(factory, name, format);
-            
-            uniformW = getUniform("w");
-            uniformH = getUniform("h");
-        }
-        
-        void loadWidthHeight(int w, int h) {
-            uniformW.set((float) w);
-            uniformH.set((float) h);
-        }
-    }
-    
-    /*public static DrawFbInAreaShader drawFbInAreaShader;
-    public static GlProgram portalAreaShader;
-    public static ShaderInstance blitScreenNoBlendShader;*/
-    
-    public static void drawPortalAreaWithFramebuffer(
-        Portal portal,
-        RenderTarget textureProvider,
-        Matrix4f modelViewMatrix,
-        Matrix4f projectionMatrix
-    ) {
-        
-        GlStateManager._colorMask(true, true, true, true);
-        GlStateManager._enableDepthTest();
-        GlStateManager._depthMask(true);
-        GlStateManager._viewport(0, 0, textureProvider.width, textureProvider.height);
 
-        RenderSystem.setShader(drawFbInAreaShader);
-        GlProgram shader = RenderSystem.getShader();
+//        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
+//            try {
+//                DrawFbInAreaShader shader = new DrawFbInAreaShader(
+//                    getResourceFactory(resourceManager),
+//                    "portal_draw_fb_in_area",
+//                    DefaultVertexFormat.POSITION_COLOR
+//                );
+//                resultConsumer.accept(shader);
+//                drawFbInAreaShader = shader;
+//            }
+//            catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
 
-        Objects.requireNonNull(shader, "shader is null")
-                .bindSampler("DiffuseSampler", textureProvider.getColorTextureId());
-        Objects.requireNonNull(shader.getUniform("w"), "no w")
-                .set(textureProvider.width);
-        Objects.requireNonNull(shader.getUniform("h"), "no h")
-                .set(textureProvider.height);
-        
-        if (shader.MODEL_VIEW_MATRIX != null) {
-            shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);
-        }
-        
-        if (shader.PROJECTION_MATRIX != null) {
-            shader.PROJECTION_MATRIX.set(projectionMatrix);
-        }
-        
-        shader.apply();
-        
-        ViewAreaRenderer.buildPortalViewAreaTrianglesBuffer(
-            Vec3.ZERO,//fog
-            portal,
-            CHelper.getCurrentCameraPos(),
-            RenderStates.getPartialTick()
-        );
-        
-        
-        shader.clear();
-
-        RenderSystem.clearShader();
+//        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
+//            try {
+//                ShaderInstance shader = new ShaderInstance(
+//                    getResourceFactory(resourceManager),
+//                    "portal_area",
+//                    DefaultVertexFormat.POSITION_COLOR
+//                );
+//                resultConsumer.accept(shader);
+//                portalAreaShader = shader;
+//            }
+//            catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//
+//        loadShaderSignal.connect((resourceManager, resultConsumer) -> {
+//            try {
+//                ShaderInstance shader = new ShaderInstance(
+//                    getResourceFactory(resourceManager),
+//                    "blit_screen_noblend",
+//                    DefaultVertexFormat.POSITION_TEX_COLOR
+//                );
+//                resultConsumer.accept(shader);
+//                blitScreenNoBlendShader = shader;
+//            }
+//            catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
     }
-    
+
+//    // vanilla hardcodes the shader namespace to be "minecraft"
+//    private static ResourceProvider getResourceFactory(ResourceProvider resourceManager) {
+//        ResourceProvider resourceFactory = new ResourceProvider() {
+//            @Override
+//            public Optional<Resource> getResource(ResourceLocation resourceLocation) {
+//                ResourceLocation corrected = McHelper.newResourceLocation(
+//                    "immersive_portals", resourceLocation.getPath());
+//                return resourceManager.getResource(corrected);
+//            }
+//        };
+//        return resourceFactory;
+//    }
+
+//    public static class DrawFbInAreaShader extends ShaderInstance {
+//
+//        public final Uniform uniformW;
+//        public final Uniform uniformH;
+//
+//        public DrawFbInAreaShader(
+//            ResourceProvider factory, String name, VertexFormat format
+//        ) throws IOException {
+//            super(factory, name, format);
+//
+//            uniformW = getUniform("w");
+//            uniformH = getUniform("h");
+//        }
+//
+//        void loadWidthHeight(int w, int h) {
+//            uniformW.set((float) w);
+//            uniformH.set((float) h);
+//        }
+//    }
+//
+//    public static DrawFbInAreaShader drawFbInAreaShader;
+//    public static ShaderInstance portalAreaShader;
+//    public static ShaderInstance blitScreenNoBlendShader;
+//
+//    public static void drawPortalAreaWithFramebuffer(
+//        Portal portal,
+//        RenderTarget textureProvider,
+//        Matrix4f modelViewMatrix,
+//        Matrix4f projectionMatrix
+//    ) {
+//
+//        GlStateManager._colorMask(true, true, true, true);
+//        GlStateManager._enableDepthTest();
+//        GlStateManager._depthMask(true);
+//        GlStateManager._viewport(0, 0, textureProvider.width, textureProvider.height);
+//
+//        DrawFbInAreaShader shader = drawFbInAreaShader;
+//        shader.setSampler("DiffuseSampler", textureProvider.getColorTextureId());
+//        shader.loadWidthHeight(textureProvider.width, textureProvider.height);
+//
+//        if (shader.MODEL_VIEW_MATRIX != null) {
+//            shader.MODEL_VIEW_MATRIX.set(modelViewMatrix);
+//        }
+//
+//        if (shader.PROJECTION_MATRIX != null) {
+//            shader.PROJECTION_MATRIX.set(projectionMatrix);
+//        }
+//
+//        shader.apply();
+//
+//        ViewAreaRenderer.buildPortalViewAreaTrianglesBuffer(
+//            Vec3.ZERO,//fog
+//            portal,
+//            CHelper.getCurrentCameraPos(),
+//            RenderStates.getPartialTick()
+//        );
+//
+//
+//        shader.clear();
+//    }
+
     public static void renderScreenTriangle() {
         renderScreenTriangle(255, 255, 255, 255);
     }
-    
+
     public static void renderScreenTriangle(Vec3 color) {
         renderScreenTriangle(
-            (int) (color.x * 255),
-            (int) (color.y * 255),
-            (int) (color.z * 255),
-            255
+                (int) (color.x * 255),
+                (int) (color.y * 255),
+                (int) (color.z * 255),
+                255
         );
     }
-    
-    public static void testOneTriangle(int r, int g, int b, int a) {
-        ShaderInstance shader = GameRenderer.getPositionColorShader();
-        Validate.notNull(shader);
-        
-        Matrix4f identityMatrix = new Matrix4f();
-        identityMatrix.identity();
-        
-        shader.MODEL_VIEW_MATRIX.set(identityMatrix);
-        shader.PROJECTION_MATRIX.set(identityMatrix);
-        
-        shader.apply();
-        
-        Tesselator tessellator = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tessellator
-            .begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
-        
-        // upper triangle
-//        bufferBuilder.addVertex(1, -1, 0).setColor(r, g, b, a)
-//            ;
-//        bufferBuilder.addVertex(1, 1, 0).setColor(r, g, b, a)
-//            ;
-//        bufferBuilder.addVertex(-1, 1, 0).setColor(r, g, b, a)
-//            ;
-        
-        // down triangle
-        bufferBuilder.addVertex(-1, 1, 0).setColor(r, g, b, a);
-        bufferBuilder.addVertex(-1, -1, 0).setColor(r, g, b, a);
-        bufferBuilder.addVertex(1, -1, 0).setColor(r, g, b, a);
-        
-        bufferBuilder.addVertex(1, 0, 0).setColor(r, g, b, a);
-        bufferBuilder.addVertex(0, 1, 0).setColor(r, g, b, a);
-        bufferBuilder.addVertex(-1, 0, 0).setColor(r, g, b, a);
-        
-        BufferUploader.draw(bufferBuilder.build());
-        
-        shader.clear();
-    }
-    
+
+//    public static void testOneTriangle(int r, int g, int b, int a) {
+//        ShaderInstance shader = GameRenderer.getPositionColorShader();
+//        Validate.notNull(shader);
+//
+//        Matrix4f identityMatrix = new Matrix4f();
+//        identityMatrix.identity();
+//
+//        shader.MODEL_VIEW_MATRIX.set(identityMatrix);
+//        shader.PROJECTION_MATRIX.set(identityMatrix);
+//
+//        shader.apply();
+//
+//        Tesselator tessellator = Tesselator.getInstance();
+//        BufferBuilder bufferBuilder = tessellator
+//            .begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+//
+//        // upper triangle
+////        bufferBuilder.addVertex(1, -1, 0).setColor(r, g, b, a)
+////            ;
+////        bufferBuilder.addVertex(1, 1, 0).setColor(r, g, b, a)
+////            ;
+////        bufferBuilder.addVertex(-1, 1, 0).setColor(r, g, b, a)
+////            ;
+//
+//        // down triangle
+//        bufferBuilder.addVertex(-1, 1, 0).setColor(r, g, b, a);
+//        bufferBuilder.addVertex(-1, -1, 0).setColor(r, g, b, a);
+//        bufferBuilder.addVertex(1, -1, 0).setColor(r, g, b, a);
+//
+//        bufferBuilder.addVertex(1, 0, 0).setColor(r, g, b, a);
+//        bufferBuilder.addVertex(0, 1, 0).setColor(r, g, b, a);
+//        bufferBuilder.addVertex(-1, 0, 0).setColor(r, g, b, a);
+//
+//        BufferUploader.draw(bufferBuilder.build());
+//
+//        shader.clear();
+//    }
+
     /**
-     * {@link RenderTarget#blitToScreen(int, int)}
+     * {@link RenderTarget#blitAndBlendToScreen}
      */
     @IPVanillaCopy
     public static void renderScreenTriangle(int r, int g, int b, int a) {
-        ShaderInstance shader = GameRenderer.getPositionColorShader();
-        Validate.notNull(shader);
-        
+        ShaderProgram shader = CoreShaders.POSITION_COLOR;
+        Validate.notNull(shader, "Position color shader is null");
+
         Matrix4f identityMatrix = new Matrix4f();
         identityMatrix.identity();
-        
-        shader.MODEL_VIEW_MATRIX.set(identityMatrix);
-        shader.PROJECTION_MATRIX.set(identityMatrix);
-        
-        shader.apply();
-        
+
+        RenderSystem.getModelViewStack().pushMatrix();
+        RenderSystem.getModelViewStack().set(identityMatrix);
+
+        RenderSystem.setProjectionMatrix(identityMatrix, ProjectionType.ORTHOGRAPHIC);
+
         Tesselator tessellator = RenderSystem.renderThreadTesselator();
         BufferBuilder bufferBuilder = tessellator.
-            begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
-        
+                begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+
         bufferBuilder.addVertex(1, -1, 0).setColor(r, g, b, a);
         bufferBuilder.addVertex(1, 1, 0).setColor(r, g, b, a);
         bufferBuilder.addVertex(-1, 1, 0).setColor(r, g, b, a);
-        
+
         bufferBuilder.addVertex(-1, 1, 0).setColor(r, g, b, a);
         bufferBuilder.addVertex(-1, -1, 0).setColor(r, g, b, a);
         bufferBuilder.addVertex(1, -1, 0).setColor(r, g, b, a);
-        
-        BufferUploader.draw(bufferBuilder.build());
-        
-        shader.clear();
+
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+
+        RenderSystem.getModelViewStack().popMatrix();
+
+        Objects.requireNonNull(RenderSystem.getShader()).clear();
+        RenderSystem.clearShader();
     }
-    
+
     /**
      * {@link RenderTarget#blitToScreen(int, int)}
      */
     public static void drawScreenFrameBuffer(
-        RenderTarget textureProvider,
-        boolean doUseAlphaBlend,
-        boolean doEnableModifyAlpha
+            RenderTarget textureProvider,
+            boolean doUseAlphaBlend,
+            boolean doEnableModifyAlpha
     ) {
         int x = 0;
         int y = 0;
-        
+
         int viewportWidth = textureProvider.viewWidth;
         int viewportHeight = textureProvider.viewHeight;
-        
+
         drawFramebufferWithCoordinatesAndDimensions(
-            textureProvider, doUseAlphaBlend, doEnableModifyAlpha,
-            x, y, viewportWidth, viewportHeight
+                textureProvider, doUseAlphaBlend, doEnableModifyAlpha,
+                x, y, viewportWidth, viewportHeight
         );
     }
 
@@ -321,38 +310,39 @@ public class MyRenderHelper {
                 viewportWidth, viewportHeight
         );
     }
-    
+
     public static void drawFramebufferWithBounds(
-        RenderTarget textureProvider, boolean doUseAlphaBlend, boolean doEnableModifyAlpha,
-        int xMin, int xMax, int yMin, int yMax
+            RenderTarget textureProvider, boolean doUseAlphaBlend, boolean doEnableModifyAlpha,
+            int xMin, int xMax, int yMin, int yMax
     ) {
 
         drawFramebufferWithCoordinatesAndDimensions(
-            textureProvider,
-            doUseAlphaBlend, doEnableModifyAlpha,
-            xMin, yMin,
-            Mth.abs(xMax - xMin),
-            Mth.abs(yMax - yMin)
+                textureProvider,
+                doUseAlphaBlend, doEnableModifyAlpha,
+                xMin, yMin,
+                Mth.abs(xMax - xMin),
+                Mth.abs(yMax - yMin)
         );
     }
-    
+
     /**
      * {@link RenderTarget#blitToScreen(int, int)}
      */
+    @SuppressWarnings("resource")
     @IPVanillaCopy
     public static void drawFramebufferWithCoordinatesAndDimensions(
-        RenderTarget textureProvider, boolean doUseAlphaBlend, boolean doEnableModifyAlpha,
-        int x, int y, int viewportWidth, int viewportHeight
+            RenderTarget textureProvider, boolean doUseAlphaBlend, boolean doEnableModifyAlpha,
+            int x, int y, int viewportWidth, int viewportHeight
     ) {
         CHelper.checkGlError();
 
         RenderSystem.disableDepthTest();
         RenderSystem.depthMask(false);
         RenderSystem.viewport(x, textureProvider.viewHeight - viewportHeight - y, viewportWidth, viewportHeight);
-        
+
         if (doUseAlphaBlend) {
             RenderSystem.enableBlend();
-            
+
             // this is used for rendering a FB onto screen when the FB contains translucent things
             // the FB should initialize with zero color and zero alpha
             // MC's default blend func is: color = srcColor * srcAlpha + dstColor * (1-srcAlpha)
@@ -361,47 +351,54 @@ public class MyRenderHelper {
             // color = contentColor * contentAlpha + dstColor * (1-contentAlpha)
             // color = fbColor * 1 + dstColor * (1-contentAlpha)
             RenderSystem.blendFuncSeparate(
-                GlStateManager.SourceFactor.ONE,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ZERO,
-                GlStateManager.DestFactor.ONE
+                    GlStateManager.SourceFactor.ONE,
+                    GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                    GlStateManager.SourceFactor.ZERO,
+                    GlStateManager.DestFactor.ONE
             );
         }
         else {
             RenderSystem.disableBlend();
         }
-        
+
         if (doEnableModifyAlpha) {
             RenderSystem.colorMask(true, true, true, true);
         }
         else {
             RenderSystem.colorMask(true, true, true, false);
         }
-        
-        ShaderInstance shader = doUseAlphaBlend ?
-            client.gameRenderer.blitShader : blitScreenNoBlendShader;
-        
+
+        ShaderProgram shader = doUseAlphaBlend ?
+                CoreShaders.BLIT_SCREEN : BLIT_SCREEN_NOBLEND;
+
         Validate.notNull(shader, "shader is null");
-        
-        shader.setSampler("DiffuseSampler", textureProvider.getColorTextureId());
-        shader.apply();
+
+        RenderSystem.setShader(shader);
+        CompiledShaderProgram compiledShaderProgram = RenderSystem.getShader();
+        Validate.notNull(compiledShaderProgram, "compiledShaderProgram is null");
+
+        compiledShaderProgram.bindSampler("DiffuseSampler", textureProvider.getColorTextureId());
+
         BufferBuilder bufferBuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
         bufferBuilder.addVertex(0.0f, 0.0f, 0.0f);
         bufferBuilder.addVertex(1.0f, 0.0f, 0.0f);
         bufferBuilder.addVertex(1.0f, 1.0f, 0.0f);
         bufferBuilder.addVertex(0.0f, 1.0f, 0.0f);
-        BufferUploader.draw(bufferBuilder.buildOrThrow());
-        shader.clear();
+        BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
+
+        compiledShaderProgram.clear();
+
+        RenderSystem.clearShader();
 
         RenderSystem.depthMask(true);
         RenderSystem.colorMask(true, true, true, true);
-        
+
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        
+
         CHelper.checkGlError();
     }
-    
+
     // it will remove the light sections that are marked to be removed
     // if not, light data will cause minor memory leak
     // and wrongly remove the light data when the chunks get reloaded to client
@@ -410,14 +407,14 @@ public class MyRenderHelper {
         if (!ClientWorldLoader.getIsInitialized()) {
             return;
         }
-        
+
         ClientWorldLoader.getClientWorlds().forEach(world -> {
             if (!RenderStates.isDimensionRendered(world.dimension())) {
                 world.getChunkSource().getLightEngine().runLightUpdates();
             }
         });
     }
-    
+
     /**
      * If we don't do this
      * the future created in {@link SectionRenderDispatcher#uploadSectionLayer}
@@ -427,161 +424,162 @@ public class MyRenderHelper {
         if (!ClientWorldLoader.getIsInitialized()) {
             return;
         }
-        
+
         ClientWorldLoader.WORLD_RENDERER_MAP.forEach((dim, worldRenderer) -> {
+            Validate.notNull(client.level, "client.level is null");
             if (client.level.dimension() != dim) {
                 worldRenderer.getSectionRenderDispatcher().uploadAllPendingUploads();
             }
         });
     }
-    
+
     public static void applyMirrorFaceCulling() {
         glCullFace(GL_FRONT);
     }
-    
+
     public static void recoverFaceCulling() {
         glCullFace(GL_BACK);
     }
-    
+
     public static void clearAlphaTo1(RenderTarget mcFrameBuffer) {
         mcFrameBuffer.bindWrite(true);
         RenderSystem.colorMask(false, false, false, true);
         RenderSystem.clearColor(0, 0, 0, 1.0f);
-        RenderSystem.clear(GL_COLOR_BUFFER_BIT, true);
+        RenderSystem.clear(GL_COLOR_BUFFER_BIT);
         RenderSystem.colorMask(true, true, true, true);
     }
-    
+
     public static void restoreViewPort() {
         Minecraft client = Minecraft.getInstance();
         GlStateManager._viewport(
-            0,
-            0,
-            client.getWindow().getWidth(),
-            client.getWindow().getHeight()
+                0,
+                0,
+                client.getWindow().getWidth(),
+                client.getWindow().getHeight()
         );
     }
-    
+
     public static float transformFogDistance(float value) {
         if (!WorldRenderInfo.isFogEnabled()) {
             return value * 23333;
         }
-        
+
         // just disable fog for fuse-view portals for now
         if (PortalRendering.isRendering()) {
             Portal renderingPortal = PortalRendering.getRenderingPortal();
-            
+
             if (renderingPortal.isFuseView()) {
                 return value * 23333;
             }
         }
-        
+
         // as non-fuse-view portals does not apply scale transformation to modelview,
         // there is no need to transform fog distance (both with and without sodium)
-        
+
         return value;
     }
-    
+
     private static boolean debugEnabled = false;
-    
+
     public static void debugFramebufferDepth() {
         if (!debugEnabled) {
             return;
         }
         debugEnabled = false;
-        
+
         int width = client.getMainRenderTarget().width;
         int height = client.getMainRenderTarget().height;
-        
-        
+
+
         ByteBuffer directBuffer = ByteBuffer.allocateDirect(width * height * 4).order(ByteOrder.LITTLE_ENDIAN);
-        
+
         FloatBuffer floatBuffer = directBuffer.asFloatBuffer();
-        
+
         glReadPixels(
-            0, 0, width, height,
-            GL_DEPTH_COMPONENT, GL_FLOAT, floatBuffer
+                0, 0, width, height,
+                GL_DEPTH_COMPONENT, GL_FLOAT, floatBuffer
         );
-        
+
         float[] data = new float[width * height];
-        
+
         floatBuffer.rewind();
         floatBuffer.get(data);
-        
+
         float maxValue = (float) IntStream.range(0, data.length)
-            .mapToDouble(i -> data[i]).max().getAsDouble();
+                .mapToDouble(i -> data[i]).max().getAsDouble();
         float minValue = (float) IntStream.range(0, data.length)
-            .mapToDouble(i -> data[i]).min().getAsDouble();
-        
+                .mapToDouble(i -> data[i]).min().getAsDouble();
+
         byte[] grayData = new byte[width * height];
         for (int i = 0; i < data.length; i++) {
             float datum = data[i];
-            
+
             datum = (datum - minValue) / (maxValue - minValue);
-            
+
             grayData[i] = (byte) (datum * 255);
         }
-        
+
         BufferedImage bufferedImage =
-            new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-        
+                new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+
         bufferedImage.setData(
-            Raster.createRaster(
-                bufferedImage.getSampleModel(),
-                new DataBufferByte(grayData, grayData.length), new Point()
-            )
+                Raster.createRaster(
+                        bufferedImage.getSampleModel(),
+                        new DataBufferByte(grayData, grayData.length), new Point()
+                )
         );
-        
+
         System.out.println("oops");
     }
-    
+
     public static void debugFramebufferColorRed() {
         if (!debugEnabled) {
             return;
         }
         debugEnabled = false;
-        
+
         int width = client.getMainRenderTarget().width;
         int height = client.getMainRenderTarget().height;
-        
-        
+
+
         ByteBuffer directBuffer = ByteBuffer.allocateDirect(width * height * 4).order(ByteOrder.LITTLE_ENDIAN);
-        
+
         FloatBuffer floatBuffer = directBuffer.asFloatBuffer();
-        
+
         glReadPixels(
-            0, 0, width, height,
-            GL_RED, GL_FLOAT, floatBuffer
+                0, 0, width, height,
+                GL_RED, GL_FLOAT, floatBuffer
         );
-        
+
         float[] data = new float[width * height];
-        
+
         floatBuffer.rewind();
         floatBuffer.get(data);
-        
+
         float maxValue = (float) IntStream.range(0, data.length)
-            .mapToDouble(i -> data[i]).max().getAsDouble();
+                .mapToDouble(i -> data[i]).max().getAsDouble();
         float minValue = (float) IntStream.range(0, data.length)
-            .mapToDouble(i -> data[i]).min().getAsDouble();
-        
+                .mapToDouble(i -> data[i]).min().getAsDouble();
+
         byte[] grayData = new byte[width * height];
         for (int i = 0; i < data.length; i++) {
             float datum = data[i];
-            
+
             datum = (datum - minValue) / (maxValue - minValue);
-            
+
             grayData[i] = (byte) (datum * 255);
         }
-        
+
         BufferedImage bufferedImage =
-            new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-        
+                new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+
         bufferedImage.setData(
-            Raster.createRaster(
-                bufferedImage.getSampleModel(),
-                new DataBufferByte(grayData, grayData.length), new Point()
-            )
+                Raster.createRaster(
+                        bufferedImage.getSampleModel(),
+                        new DataBufferByte(grayData, grayData.length), new Point()
+                )
         );
-        
+
         System.out.println("oops");
     }
 }

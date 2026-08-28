@@ -1,5 +1,6 @@
 package qouteall.imm_ptl.core.mixin.client.render.optimization;
 
+import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -47,11 +48,11 @@ public abstract class MixinLevelRenderer_Clouds {
     private int ticks;
     
     @Inject(
-        method = "renderClouds",
+        method = "addCloudsPass",
         at = @At("HEAD")
     )
     private void onBeginRenderClouds(
-        PoseStack poseStack, Matrix4f projectionMatrix, Matrix4f frustrumMatrix, float partialTick, double camX, double camY, double camZ, CallbackInfo ci
+            FrameGraphBuilder frameGraphBuilder, CloudStatus cloudStatus, Vec3 vec3, long l, float f, int i, float g, CallbackInfo ci
     ) {
         if (RenderStates.getRenderedPortalNum() == 0) {
             return;
