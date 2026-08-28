@@ -1,15 +1,13 @@
 package qouteall.imm_ptl.core.compat.mixin.flywheel;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import qouteall.imm_ptl.core.ClientWorldLoader;
 
-@Pseudo
-@Mixin(targets = "com.jozufozu.flywheel.core.crumbling.CrumblingRenderer", remap = false)
+/*@Mixin(CrumblingRenderer.Class , remap = false)
 public class MixinFlywheelCrumblingRenderer {
     
     @Inject(
@@ -21,4 +19,4 @@ public class MixinFlywheelCrumblingRenderer {
             ci.cancel();
         }
     }
-}
+}*/
