@@ -98,6 +98,8 @@ dependencies {
         transitive(false)
     }
 
+    modCompileOnly("org.ladysnake.cardinal-components-api:cardinal-components-base:7.3.2")
+
     modApi("com.github.iPortalTeam:DimLib:${dimlib_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
