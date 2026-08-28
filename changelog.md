@@ -2,4 +2,4 @@
   - If this as messed up any grammar in any language please open a Pull Request to fix it
 - Replace every instance of "qouteall" in the report suggestion to "VesMaybeVesper"
   - If this as messed up any grammar in any language please open a Pull Request to fix it
-- 
+- Point update checker to correct info and re-enable

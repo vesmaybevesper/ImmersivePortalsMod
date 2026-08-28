@@ -103,8 +103,7 @@ public class O_O {
         else {
             // it's in github pages
             // https://github.com/qouteall/immptl_info
-            //return "https://qouteall.fun/immptl_info/%s.json".formatted(gameVersion);
-            return null;
+            return "https://vesmaybevesper.github.io/ImmersivePortalsMod/%s.json".formatted(gameVersion);
         }
     }
     

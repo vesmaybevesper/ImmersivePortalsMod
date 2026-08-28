@@ -56,9 +56,9 @@ public class IPConfig implements ConfigData {
     // client invisible configs
     
     @ConfigEntry.Gui.Excluded
-    public boolean checkModInfoFromInternet = false;
+    public boolean checkModInfoFromInternet = true;
     @ConfigEntry.Gui.Excluded
-    public boolean enableUpdateNotification = false;
+    public boolean enableUpdateNotification = true;
     @ConfigEntry.Gui.Excluded
     public boolean sharedBlockMeshBufferOptimization = true;
     @ConfigEntry.Gui.Excluded
